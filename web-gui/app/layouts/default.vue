@@ -3,12 +3,10 @@
     <!-- HEADER -->
     <AppHeader />
 
-    <!-- MAIN AREA -->
+    <!-- MAIN -->
     <div class="flex flex-1 overflow-hidden">
-      <!-- SIDEBAR (placeholder pour l’instant) -->
-      <aside class="w-64 border-r bg-white">
-        <div class="p-4 text-sm text-gray-500">Sidebar (filtres & modes)</div>
-      </aside>
+      <!-- SIDEBAR -->
+      <AppSidebar />
 
       <!-- CONTENT -->
       <main class="flex-1 overflow-auto bg-gray-50">
@@ -20,4 +18,5 @@
 
 <script setup lang="ts">
 import AppHeader from "@/components/navigation/AppHeader.vue";
+import AppSidebar from "@/components/sidebar/AppSidebar.vue";
 </script>

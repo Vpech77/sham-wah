@@ -1,57 +1,56 @@
 <template>
-  <header class="h-14 border-b bg-white flex items-center justify-between px-6">
-    <!-- LEFT: APP TITLE -->
-    <div class="flex items-center gap-2">
-      <span class="text-lg font-semibold text-gray-900"> Sham-Wah </span>
+  <header
+    class="h-20 border-b bg-white dark:bg-gray-900 dark:border-gray-800 flex items-center justify-between px-6 shadow-sm"
+  >
+    <!-- LEFT: APP TITLE & LOGO -->
+    <div class="flex items-center gap-3">
+      <span
+        class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight"
+      >
+        Sham-Wah
+      </span>
     </div>
 
-    <!-- RIGHT: NAV + ACTIONS -->
+    <!-- CENTER: NAVIGATION -->
+    <nav class="hidden md:flex items-center gap-4">
+      <NuxtLink
+        v-for="item in navItems"
+        :key="item.view"
+        :to="item.path"
+        class="px-4 py-2 rounded-lg text-md font-medium transition-all duration-200"
+        :class="linkClass(item.view)"
+      >
+        {{ item.label }}
+      </NuxtLink>
+    </nav>
+
+    <!-- RIGHT: ACTIONS -->
     <div class="flex items-center gap-6">
-      <!-- Navigation -->
-      <nav class="flex items-center gap-4 text-sm">
-        <NuxtLink
-          v-for="item in navItems"
-          :key="item.view"
-          :to="item.path"
-          class="transition"
-          :class="linkClass(item.view)"
-        >
-          {{ item.label }}
-        </NuxtLink>
-      </nav>
-
-      <!-- Actions -->
-      <div class="flex items-center gap-3 border-l pl-4">
-        <button class="text-gray-500 hover:text-gray-900" title="Switch theme">
-          🌙
-        </button>
-
-        <button
-          class="text-gray-500 hover:text-gray-900"
-          title="Change language"
-        >
-          🌐
-        </button>
-
-        <a
-          href="https://github.com/your-org/sham-wah"
-          target="_blank"
-          class="text-gray-500 hover:text-gray-900"
-          title="GitHub repository"
-        >
-          ⎈
-        </a>
-      </div>
+      <ThemeSwitcher />
+      <LanguageSelector />
+      <a
+        href="https://github.com/vpech77/sham-wah"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+        title="View on GitHub"
+      >
+        <IconGitHub class="w-8 h-8" />
+      </a>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
+import { ref, watch } from "vue";
 import { useUiStore, type ViewName } from "@/stores/ui";
+import ThemeSwitcher from "./ThemeSwitcher.vue";
+import LanguageSelector from "./LanguageSelector.vue";
+import IconGitHub from "@/components/icons/IconGitHub.vue";
 
 const route = useRoute();
 const ui = useUiStore();
+const mobileMenuOpen = ref(false);
 
 /**
  * Navigation configuration
@@ -77,6 +76,7 @@ watch(
     if (match) {
       ui.setView(match.view);
     }
+    mobileMenuOpen.value = false;
   },
   { immediate: true },
 );
@@ -86,7 +86,11 @@ watch(
  */
 function linkClass(view: ViewName) {
   return ui.currentView === view
-    ? "font-semibold text-indigo-600"
-    : "text-gray-600 hover:text-gray-900";
+    ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800";
+}
+
+function toggleMobileMenu() {
+  mobileMenuOpen.value = !mobileMenuOpen.value;
 }
 </script>

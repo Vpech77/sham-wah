@@ -7,7 +7,11 @@ export default defineNuxtConfig({
     head: {
       title: "Sham-Wah App",
       meta: [
-        { name: "description", content: "Description de mon application" },
+        {
+          name: "description",
+          content:
+            "Application for Querying and Discovering Ressources From A Knowledge Graph in Alpine Ecology",
+        },
       ],
     },
   },

@@ -7,6 +7,8 @@
         : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white hover:scale-105'
     "
     @click="$emit('select')"
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
   >
     <span>{{ tab.icon }}</span>
 
@@ -20,7 +22,7 @@
       leave-to-class="opacity-0 scale-90"
     >
       <span
-        v-if="!open"
+        v-if="isHovered && !open"
         class="absolute left-16 whitespace-nowrap bg-gray-900 dark:bg-gray-700 text-white text-xs font-medium px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none shadow-lg z-50"
       >
         {{ tab.label }}
@@ -38,6 +40,8 @@ defineProps<{
   active: boolean;
   open: boolean;
 }>();
+
+const isHovered = ref(false);
 
 defineEmits(["select"]);
 </script>

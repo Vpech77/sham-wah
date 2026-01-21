@@ -30,10 +30,8 @@ const tabs: Array<{
 ];
 
 function onSelect(tab: SidebarTab) {
-  if (!ui.sidebarOpen) {
-    ui.openSidebar(tab);
-  } else {
-    ui.setSidebarTab(tab);
-  }
+  if (!ui.sidebarOpen) return ui.openSidebar(tab);
+  if (ui.activeSidebarTab === tab) return ui.toggleSidebar();
+  ui.setSidebarTab(tab);
 }
 </script>

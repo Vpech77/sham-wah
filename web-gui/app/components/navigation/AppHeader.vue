@@ -3,7 +3,7 @@
     class="h-20 border-b bg-white dark:bg-gray-900 dark:border-gray-800 flex items-center justify-between px-6 shadow-sm"
   >
     <!-- LEFT: APP TITLE & LOGO -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2 pl-4">
       <span
         class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight"
       >

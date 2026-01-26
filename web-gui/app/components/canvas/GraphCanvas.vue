@@ -153,8 +153,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
-// import Graph from 'graphology';
-// import Sigma from 'sigma';
 
 const graphContainer = ref<HTMLDivElement | null>(null);
 const loading = ref(true);
@@ -164,30 +162,41 @@ const selectedNode = ref<any>(null);
 let sigma: any = null;
 let graph: any = null;
 
-onMounted(() => {
-  // Initialize Sigma.js here
-  // Example initialization (uncomment when sigma is installed):
-  /*
+onMounted(async () => {
+  const Sigma = (await import("sigma")).default;
+  const Graph = (await import("graphology")).default;
+
   graph = new Graph();
-  
+
   // Add sample nodes
-  graph.addNode('n1', { x: 0, y: 0, size: 10, label: 'Node 1', color: '#3B82F6' });
-  graph.addNode('n2', { x: 1, y: 1, size: 10, label: 'Node 2', color: '#8B5CF6' });
-  graph.addEdge('n1', 'n2');
-  
+  graph.addNode("n1", {
+    x: 0,
+    y: 0,
+    size: 10,
+    label: "Node 1",
+    color: "#3B82F6",
+  });
+  graph.addNode("n2", {
+    x: 1,
+    y: 1,
+    size: 10,
+    label: "Node 2",
+    color: "#8B5CF6",
+  });
+  graph.addEdge("n1", "n2");
+
   sigma = new Sigma(graph, graphContainer.value!, {
     renderLabels: showLabels.value,
   });
-  
-  sigma.on('clickNode', ({ node }) => {
+
+  sigma.on("clickNode", ({ node }: { node: string }) => {
     const nodeData = graph.getNodeAttributes(node);
     selectedNode.value = {
       label: nodeData.label,
       degree: graph.degree(node),
-      type: nodeData.type || 'Default'
+      type: nodeData.type || "Default",
     };
   });
-  */
 
   // Simulate loading
   setTimeout(() => {

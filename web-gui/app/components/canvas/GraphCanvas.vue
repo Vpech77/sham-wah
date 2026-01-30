@@ -135,19 +135,6 @@
 
     <!-- Graph Container -->
     <div ref="graphContainer" class="w-full h-full"></div>
-
-    <!-- Loading State -->
-    <div
-      v-if="loading"
-      class="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
-    >
-      <div class="text-center">
-        <div
-          class="inline-block w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-3"
-        ></div>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Loading graph...</p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -155,7 +142,6 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
 const graphContainer = ref<HTMLDivElement | null>(null);
-const loading = ref(true);
 const showLabels = ref(true);
 const selectedNode = ref<any>(null);
 
@@ -197,11 +183,6 @@ onMounted(async () => {
       type: nodeData.type || "Default",
     };
   });
-
-  // Simulate loading
-  setTimeout(() => {
-    loading.value = false;
-  }, 1000);
 });
 
 onBeforeUnmount(() => {

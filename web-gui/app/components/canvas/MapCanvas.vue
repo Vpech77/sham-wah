@@ -188,14 +188,17 @@ const searchQuery = ref("");
 const selectedLocation = ref<any>(null);
 const currentStyle = ref("streets");
 
+const config = useRuntimeConfig();
+const key = config.public.MAPTILER_KEY;
+
 let map: any = null;
 
 onMounted(() => {
   map = new maplibregl.Map({
     container: mapContainer.value!,
-    style: "https://demotiles.maplibre.org/style.json",
-    center: [2.3488, 48.8534], // Paris coordinates
-    zoom: 4,
+    style: `https://api.maptiler.com/maps/aquarelle-v4/style.json?key=${key}`,
+    center: [2.3488, 48.8534],
+    zoom: 5,
   });
 
   map.on("load", () => {

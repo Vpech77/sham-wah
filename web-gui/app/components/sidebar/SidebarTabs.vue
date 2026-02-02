@@ -24,8 +24,8 @@ const tabs: Array<{
   label: string;
   icon: string;
 }> = [
-  { id: "cypher", label: "Requête Graphe", icon: "G" },
   { id: "nlq", label: "Langage naturel", icon: "N" },
+  { id: "cypher", label: "Requête Graphe", icon: "G" },
   { id: "chatbot", label: "Chatbot", icon: "R" },
 ];
 

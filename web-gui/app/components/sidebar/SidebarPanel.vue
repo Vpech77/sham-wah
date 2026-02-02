@@ -37,7 +37,7 @@
     </div>
 
     <!-- MODE D'AFFICHAGE -->
-    <div
+    <!-- <div
       class="px-6 py-4 border-b dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50"
     >
       <h3
@@ -93,7 +93,7 @@
           </div>
         </button>
       </div>
-    </div>
+    </div> -->
 
     <!-- CONTENT -->
     <div class="flex-1 overflow-auto p-6">

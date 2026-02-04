@@ -1,8 +1,20 @@
 <template>
   <div class="space-y-2">
-    <label class="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+    <label
+      class="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5"
+    >
+      <svg
+        class="w-3.5 h-3.5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+        />
       </svg>
       Concept
     </label>
@@ -29,12 +41,20 @@
         stroke="currentColor"
         viewBox="0 0 24 24"
       >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 9l-7 7-7-7"
+        />
       </svg>
     </div>
 
     <!-- Specific Concepts (if category selected) -->
-    <div v-if="selectedCategory && availableConcepts.length > 0" class="space-y-2 mt-3">
+    <div
+      v-if="selectedCategory && availableConcepts.length > 0"
+      class="space-y-2 mt-3"
+    >
       <p class="text-xs font-medium text-gray-600 dark:text-gray-400">
         Select specific concepts:
       </p>
@@ -45,9 +65,10 @@
           @click="toggleConcept(concept.value)"
           type="button"
           class="px-3 py-2 rounded-lg border text-xs font-medium transition-all duration-200"
-          :class="isSelected(concept.value)
-            ? 'border-gold-500 dark:border-gold-400 bg-gold-500 dark:bg-gold-400 text-white'
-            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gold-300 dark:hover:border-gold-600'
+          :class="
+            isSelected(concept.value)
+              ? 'border-gold-500 dark:border-gold-400 bg-gold-500 dark:bg-gold-400 text-white'
+              : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gold-300 dark:hover:border-gold-600'
           "
         >
           {{ concept.label }}
@@ -62,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch } from "vue";
 
 const props = defineProps<{
   modelValue: string[];
@@ -70,59 +91,53 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string[]];
+  "update:modelValue": [value: string[]];
 }>();
 
-const selectedCategory = ref('');
+const selectedCategory = ref("");
 
 const conceptCategories = [
   {
-    name: 'activities',
-    label: 'Activities',
+    name: "activities",
+    label: "Activities",
     concepts: [
-      { value: 'Activity', label: 'Activity (General)' },
-      { value: 'HumanOutdoorActivities', label: 'Human Outdoor Activities' },
-      { value: 'Hiking', label: 'Hiking' },
-      { value: 'Skiing', label: 'Skiing' },
-      { value: 'Cycling', label: 'Cycling' },
-      { value: 'TrailRunning', label: 'Trail Running' }
-    ]
+      { value: "Activity", label: "Activity" },
+      { value: "HumanOutdoorActivities", label: "Human Outdoor Activities" },
+      { value: "Hiking", label: "Hiking" },
+      { value: "FastHiking", label: "Fast Hiking" },
+      { value: "Skiing", label: "Skiing" },
+      { value: "Cycling", label: "Cycling" },
+      { value: "TrailRunning", label: "Trail Running" },
+    ],
   },
   {
-    name: 'land',
-    label: 'Land Entities',
+    name: "land",
+    label: "Land Entities",
     concepts: [
-      { value: 'LandEntity', label: 'Land Entity (General)' },
-      { value: 'Path', label: 'Path' },
-      { value: 'Trail', label: 'Trail' },
-      { value: 'Area', label: 'Area' },
-      { value: 'Footprint', label: 'Footprint' }
-    ]
+      { value: "SensitiveArea", label: "Sensitive Area" },
+      { value: "WaterArea", label: "Water Area" },
+      { value: "RestArea", label: "Rest Area" },
+      { value: "Landmark", label: "Landmark" },
+      { value: "Trail", label: "Trail" },
+      { value: "MotorHome", label: "Motor Home" },
+      { value: "NatureReserves", label: "Nature Reserves" },
+      { value: "Footprint", label: "Footprint" },
+    ],
   },
   {
-    name: 'species',
-    label: 'Species & Population',
+    name: "species",
+    label: "Species & Population",
     concepts: [
-      { value: 'Population', label: 'Population' },
-      { value: 'Species', label: 'Species' },
-      { value: 'AnimalMovement', label: 'Animal Movement' },
-      { value: 'AnimalDisturbance', label: 'Animal Disturbance' }
-    ]
+      { value: "Chamois", label: "Chamois" },
+      { value: "Marmots", label: "Marmots" },
+    ],
   },
-  {
-    name: 'environment',
-    label: 'Environment',
-    concepts: [
-      { value: 'Habitat', label: 'Habitat' },
-      { value: 'Season', label: 'Season' },
-      { value: 'Weather', label: 'Weather' },
-      { value: 'Topography', label: 'Topography' }
-    ]
-  }
 ];
 
 const availableConcepts = computed(() => {
-  const category = conceptCategories.find(c => c.name === selectedCategory.value);
+  const category = conceptCategories.find(
+    (c) => c.name === selectedCategory.value,
+  );
   return category?.concepts || [];
 });
 
@@ -132,13 +147,13 @@ function isSelected(value: string): boolean {
 
 function toggleConcept(value: string) {
   const newValue = isSelected(value)
-    ? props.modelValue.filter(v => v !== value)
+    ? props.modelValue.filter((v) => v !== value)
     : [...props.modelValue, value];
-  emit('update:modelValue', newValue);
+  emit("update:modelValue", newValue);
 }
 
 // Reset concepts when category changes
 watch(selectedCategory, () => {
-  emit('update:modelValue', []);
+  emit("update:modelValue", []);
 });
 </script>

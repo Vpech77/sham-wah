@@ -101,8 +101,14 @@ const conceptCategories = [
     name: "activities",
     label: "Activities",
     concepts: [
-      { value: "Activity", label: "Activity" },
       { value: "HumanOutdoorActivities", label: "Human Outdoor Activities" },
+      { value: "AnimalActivities", label: "Animal Activities" },
+    ],
+  },
+  {
+    name: "humanOutdoorActivities",
+    label: "HumanOutdoorActivities",
+    concepts: [
       { value: "Hiking", label: "Hiking" },
       { value: "FastHiking", label: "Fast Hiking" },
       { value: "Skiing", label: "Skiing" },

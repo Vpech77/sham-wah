@@ -28,11 +28,9 @@
         class="w-full px-4 py-2.5 pr-10 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-gold-500 dark:focus:ring-gold-400 focus:border-transparent transition-all appearance-none cursor-pointer"
       >
         <option value="" disabled>Select a result display...</option>
-        <option value="show">Only Nodes</option>
-        <option value="find">Nodes and all their relationships</option>
-        <option value="list">
-          Nodes and their connections leading to the concept node
-        </option>
+        <option value="show">Node only</option>
+        <option value="find">Nodes + full relationships</option>
+        <option value="list">Path to concept node</option>
       </select>
       <svg
         class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"

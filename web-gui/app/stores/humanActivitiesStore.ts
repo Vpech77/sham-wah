@@ -158,7 +158,7 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
 
     const typeTemplates =
       templates[type as keyof typeof templates] || templates.Dataset;
-    return typeTemplates[Math.floor(Math.random() * typeTemplates.length)];
+    return typeTemplates[Math.floor(Math.random() * typeTemplates.length)]!;
   }
 
   function generateAssetDescription(type: string, concepts: string[]): string {
@@ -186,7 +186,7 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
       "University Environmental Lab",
       "Forest Service Research",
     ];
-    return authors[Math.floor(Math.random() * authors.length)];
+    return authors[Math.floor(Math.random() * authors.length)]!;
   }
 
   function generateRandomLocation(): string {
@@ -198,7 +198,7 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
       "Sierra Nevada, CA",
       "Great Smoky Mountains",
     ];
-    return locations[Math.floor(Math.random() * locations.length)];
+    return locations[Math.floor(Math.random() * locations.length)]!;
   }
 
   function transformNeo4jResponse(neo4jData: any): QueryResult {

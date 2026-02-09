@@ -137,20 +137,19 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
   function generateAssetName(type: string, concept: string): string {
     const templates = {
       Dataset: [
-        `${concept} Impact Assessment Dataset`,
-        `${concept} Geographic Distribution Data`,
-        `${concept} Temporal Patterns Study`,
-        `${concept} Visitor Use Statistics`,
+        `Chamois encounters area`,
+        `Outdoor Vision Export`,
+        `Parc des Bauges Sentiers BDTopo`,
+        `Tracks MultiSensors Vincennes`,
       ],
       ScientificPaper: [
-        `Analysis of ${concept} in Protected Areas`,
-        `${concept} and Wildlife Disturbance Patterns`,
+        `Analysis of ${concept} in Sensitive Areas`,
+        `Kerouaton 2024`,
         `Ecological Impact of ${concept}`,
-        `${concept} Management Strategies`,
+        `Marchand et al. 2025`,
       ],
       ScientificSurvey: [
-        `${concept} Monitoring Survey 2024`,
-        `${concept} User Preferences Study`,
+        `Kerouatan Survey 2024`,
         `${concept} Environmental Impact Survey`,
         `${concept} Seasonal Variation Assessment`,
       ],
@@ -164,9 +163,9 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
   function generateAssetDescription(type: string, concepts: string[]): string {
     const templates = {
       Dataset:
-        "Comprehensive dataset analyzing patterns and distributions across multiple locations.",
+        "185 real encounters. Only included real encounters as they are likely enough to work with and potential encounters drastically increase amount of data",
       ScientificPaper:
-        "Peer-reviewed research examining environmental and ecological relationships.",
+        "Eye-catching or breath-catching: Role and landscape attributes of pauses differs among hikers’ profile when rambling in a French mountainous area",
       ScientificSurvey:
         "Systematic survey collecting empirical data from field observations and measurements.",
     };

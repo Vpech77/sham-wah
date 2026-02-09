@@ -331,8 +331,12 @@ const availableConcepts = [
     label: "Mountain Biking",
   },
   {
-    id: "RockClimbing",
-    label: "Rock Climbing",
+    id: "ScenicViewing",
+    label: "Scenic Viewing",
+  },
+  {
+    id: "picnicking",
+    label: "Picnicking and Resting",
   },
   {
     id: "WildlifeObservation",

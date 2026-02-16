@@ -108,6 +108,7 @@ import { useUiStore, type DisplayMode } from "@/stores/ui";
 import CypherPanel from "./panels/CypherPanel.vue";
 import NLQPanel from "./panels/NLQPanel.vue";
 import ChatbotPanel from "./panels/ChatbotPanel.vue";
+import HumanActivityPanel from "./panels/PredefinedQueryPanel.vue";
 
 const ui = useUiStore();
 
@@ -118,6 +119,11 @@ function modeClass(mode: DisplayMode) {
 }
 
 const panelMap = {
+  human: {
+    title: "Predefined Query",
+    icon: "P",
+    component: HumanActivityPanel,
+  },
   cypher: {
     title: "Graph Query",
     icon: "G",

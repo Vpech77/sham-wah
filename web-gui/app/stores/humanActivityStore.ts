@@ -99,7 +99,6 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
     });
   }
 
-  // Updated generateMockAssets to use your specific data list
   function generateMockAssets(params: QueryParams): DigitalAsset[] {
     const allMockData: DigitalAsset[] = [
       {

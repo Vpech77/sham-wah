@@ -65,7 +65,7 @@
     <div class="flex gap-3">
       <button
         @click="executeQuery"
-        :disabled="isExecuting"
+        :disabled="isExecuting || !hasCategorySelected"
         class="flex-1 px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         :class="
           isExecuting
@@ -252,8 +252,12 @@ const selectedConcepts = ref<string[]>([]);
 const selectedAssets = ref<any[]>([]);
 const isExecuting = computed(() => queryStore.isExecuting);
 
+const hasCategorySelected = computed(() => {
+  return conceptSelectorRef.value?.selectedCategory ? true : false;
+});
+
 const filters = ref({
-  limit: 10,
+  limit: 15,
   assetType: "all",
 });
 

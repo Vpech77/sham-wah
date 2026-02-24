@@ -1,39 +1,41 @@
 <template>
-  <div class="space-y-4">
-    <!-- NATURAL LANGUAGE STATEMENT -->
-    <div
+  <div class="space-y-2">
+    <!-- NATURAL LANGUAGE STATEMENT + INLINE SELECTOR -->
+    <!-- <div
       class="relative overflow-hidden rounded-xl border border-gold-200 dark:border-gold-800/50 bg-gradient-to-br from-white via-gold-50/30 to-amber-50/20 dark:from-gray-900 dark:via-gold-900/10 dark:to-amber-900/5 backdrop-blur-sm"
-    >
-      <!-- Decorative elements -->
-      <div
-        class="absolute top-0 right-0 w-32 h-32 bg-gold-400/10 dark:bg-gold-400/5 rounded-full blur-3xl"
-      ></div>
-      <div
-        class="absolute bottom-0 left-0 w-24 h-24 bg-amber-400/10 dark:bg-amber-400/5 rounded-full blur-2xl"
-      ></div>
-      <div class="relative p-5">
-        <div class="flex items-start gap-3">
-          <!-- Content -->
-          <div class="flex-1 min-w-0">
-            <h3
-              class="text-base font-semibold text-gray-900 dark:text-white mb-1"
-            >
-              I'm looking for data about...
-            </h3>
-          </div>
+    > -->
+    <!-- Decorative elements -->
+    <!-- <div
+      class="absolute top-0 right-0 w-32 h-32 bg-gold-400/10 dark:bg-gold-400/5 rounded-full blur-3xl"
+    ></div> -->
+    <div
+      class="absolute bottom-0 left-0 w-24 h-24 bg-amber-400/10 dark:bg-amber-400/5 rounded-full blur-2xl"
+    ></div>
+    <div class="relative">
+      <!-- Sentence + selector on same line -->
+      <div class="flex items-center gap-3 flex-wrap">
+        <h3
+          class="text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap shrink-0"
+        >
+          I'm looking for data about
+        </h3>
+        <div class="flex-1 min-w-[200px]">
+          <ConceptSelector
+            ref="conceptSelectorRef"
+            v-model="selectedConcepts"
+          />
         </div>
       </div>
+      <!-- </div> -->
     </div>
-    <!-- CONCEPT SELECTOR COMPONENT -->
-    <ConceptSelector ref="conceptSelectorRef" v-model="selectedConcepts" />
+
     <!-- FILTERS -->
     <div class="grid grid-cols-2 gap-3">
       <div>
         <label
           class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5"
+          >Limit</label
         >
-          Limit
-        </label>
         <input
           v-model.number="filters.limit"
           type="number"
@@ -45,9 +47,8 @@
       <div>
         <label
           class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5"
+          >Resource Type</label
         >
-          Resource Type
-        </label>
         <select
           v-model="filters.assetType"
           class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-gold-500 dark:focus:ring-gold-400 focus:border-transparent transition-all"
@@ -61,12 +62,13 @@
         </select>
       </div>
     </div>
+
     <!-- EXECUTE AND DELETE BUTTONS -->
-    <div class="flex gap-3">
+    <div class="flex gap-">
       <button
         @click="executeQuery"
         :disabled="isExecuting || !hasCategorySelected"
-        class="flex-1 px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="flex-1 px-2 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         :class="
           isExecuting
             ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'
@@ -110,14 +112,14 @@
         <span>{{ isExecuting ? "Searching..." : "Search" }}</span>
       </button>
 
-      <button
+      <!-- <button
         @click="clearQuery"
         :disabled="isExecuting || !queryStore.results"
         class="px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         :class="
           isExecuting || !queryStore.results
             ? 'bg-gray-50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-600'
-            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white hover:scale-[1.02] active:scale-[0.98]'
+            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-[1.02] active:scale-[0.98]'
         "
         title="Clear query and results"
       >
@@ -134,10 +136,11 @@
             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
           />
         </svg>
-      </button>
+      </button> -->
     </div>
+
     <!-- RESULTS SECTION -->
-    <div v-if="queryStore.results || queryStore.error" class="space-y-3">
+    <div v-if="queryStore.results || queryStore.error">
       <!-- ERROR STATE -->
       <div
         v-if="queryStore.error"
@@ -157,7 +160,7 @@
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <div class="flex-1">
+          <div>
             <p class="text-sm font-medium text-red-800 dark:text-red-300">
               Error
             </p>
@@ -167,81 +170,34 @@
           </div>
         </div>
       </div>
-      <!-- SUCCESS STATE WITH SCROLLABLE RESULTS -->
+
+      <!-- SUCCESS STATE -->
       <div v-else-if="queryStore.results">
         <!-- Results Header -->
-        <div class="flex items-center justify-between mb-2">
-          <p class="text-xs text-gray-600 dark:text-gray-400">
-            {{ queryStore.results.count }} result(s) •
-            {{ queryStore.results.executionTime }}ms
-          </p>
-        </div>
-        <!-- Scrollable Results Container -->
-        <div
-          class="space-y-2 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent"
-        >
-          <button
-            v-for="(asset, index) in queryStore.results.data"
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+          {{ queryStore.results.count }} result(s) ·
+          <!-- {{ queryStore.results.executionTime }}ms -->
+        </p>
+        <!-- Compact cards grid -->
+        <div class="flex flex-col gap-1.5 overflow-y-auto pr-1 scrollbar-thin">
+          <AssetCard
+            v-for="asset in queryStore.results.data"
             :key="asset.id"
-            @click="toggleAssetSelection(asset)"
-            class="w-full text-left py-3 p-4 rounded-lg border transition-all duration-200"
-            :class="
-              isAssetSelected(asset.id)
-                ? 'border-gold-500 dark:border-gold-500 bg-gold-50 dark:bg-gold-900/20 shadow-md'
-                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gold-300 dark:hover:border-gold-700 hover:shadow-sm'
-            "
-          >
-            <div class="flex items-start">
-              <!-- Asset Content -->
-              <div class="flex-1 min-w-0 w-full">
-                <!-- Badge -->
-                <div class="mb-2">
-                  <span
-                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
-                    :class="
-                      isAssetSelected(asset.id)
-                        ? 'bg-gold-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                    "
-                  >
-                    {{ asset.type }}
-                  </span>
-                </div>
-                <!-- Title with line clamp -->
-                <h4
-                  class="text-sm font-semibold leading-snug truncate mb-2"
-                  :class="
-                    isAssetSelected(asset.id)
-                      ? 'text-gold-900 dark:text-gold-100'
-                      : 'text-gray-900 dark:text-white'
-                  "
-                  :title="asset.name"
-                >
-                  {{ asset.name }}
-                </h4>
-                <!-- Description -->
-                <p
-                  class="text-xs line-clamp-3"
-                  :class="
-                    isAssetSelected(asset.id)
-                      ? 'text-gold-700 dark:text-gold-300'
-                      : 'text-gray-600 dark:text-gray-400'
-                  "
-                >
-                  {{ asset.description }}
-                </p>
-              </div>
-            </div>
-          </button>
+            :asset="asset"
+            :selected="isAssetSelected(asset.id)"
+            @toggle="toggleAssetSelection"
+          />
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useHumanActivitiesStore } from "~/stores/humanActivityStore";
 import ConceptSelector from "./predefinedQueryPanel/ConceptSelector.vue";
+import AssetCard from "./predefinedQueryPanel/AssetCard.vue";
 
 // Store
 const queryStore = useHumanActivitiesStore();
@@ -281,13 +237,6 @@ watch(
   { deep: true },
 );
 
-// Computed properties
-const conceptsText = computed(() => {
-  if (selectedConcepts.value.length === 0) return "";
-  return selectedConcepts.value.join(", ");
-});
-
-// Get the effective concepts to use in query (handles optional specific concepts)
 const effectiveConceptsForQuery = computed(() => {
   if (conceptSelectorRef.value?.effectiveConcepts) {
     return conceptSelectorRef.value.effectiveConcepts;
@@ -297,10 +246,8 @@ const effectiveConceptsForQuery = computed(() => {
 
 const generatedQuery = computed(() => {
   const conceptsToUse = effectiveConceptsForQuery.value;
-
   let query = "MATCH ";
 
-  // Build asset pattern
   if (filters.value.assetType === "all") {
     query +=
       "(asset:Dataset|DataService|ScientificPaper|ScientificSurvey|Process)";
@@ -308,51 +255,37 @@ const generatedQuery = computed(() => {
     query += `(asset:${filters.value.assetType})`;
   }
 
-  // Add relationship to concepts if any are selected
   if (conceptsToUse.length > 0) {
     const conceptLabels = conceptsToUse.join("|");
     query += `-[:REPRESENTS]->(concept:${conceptLabels})`;
-    // Return clause with concept
     query += "\nRETURN asset, concept";
   } else {
-    // Return clause without concept
     query += "\nRETURN asset";
   }
 
-  // Add limit
   query += `\nLIMIT ${filters.value.limit}`;
-
   return query;
 });
 
 // Methods
 async function executeQuery() {
   if (!generatedQuery.value) return;
-
-  // Clear previous selections
   selectedAssets.value = [];
-
-  const queryParams = {
+  await queryStore.executeQuery({
     query: generatedQuery.value,
     concepts: effectiveConceptsForQuery.value,
     assetType: filters.value.assetType,
     limit: filters.value.limit,
-  };
-
-  await queryStore.executeQuery(queryParams);
+  });
 }
 
 function clearQuery() {
   selectedConcepts.value = [];
   selectedAssets.value = [];
   queryStore.clearResults();
-  filters.value = {
-    limit: 15,
-    assetType: "all",
-  };
+  filters.value = { limit: 15, assetType: "all" };
 }
 
-// Asset selection methods
 function isAssetSelected(assetId: string): boolean {
   return selectedAssets.value.some((a) => a.id === assetId);
 }
@@ -365,44 +298,24 @@ function toggleAssetSelection(asset: any) {
   }
 }
 
-// Expose selected assets for parent components
-defineExpose({
-  selectedAssets,
-  selectedConcepts,
-});
+defineExpose({ selectedAssets, selectedConcepts });
 </script>
+
 <style scoped>
-/* Custom scrollbar styles for WebKit browsers */
 .scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background: #d1d5db;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 .dark .scrollbar-thin::-webkit-scrollbar-thumb {
   background: #4b5563;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
-}
-.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
-}
-/* Line clamp utility */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 </style>

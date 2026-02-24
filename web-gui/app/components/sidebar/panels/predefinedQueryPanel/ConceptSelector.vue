@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-2">
-    <label
+    <!-- <label
       class="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5"
     >
       <svg
@@ -17,7 +17,7 @@
         />
       </svg>
       Concept category
-    </label>
+    </label> -->
 
     <!-- Concept Category Selector -->
     <div class="relative">
@@ -100,10 +100,6 @@
         </button>
       </div>
     </div> -->
-
-    <p class="text-xs text-gray-500 dark:text-gray-400">
-      Filter by concepts that the assets represent
-    </p>
   </div>
 </template>
 

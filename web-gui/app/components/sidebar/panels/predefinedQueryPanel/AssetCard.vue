@@ -1,7 +1,7 @@
 <template>
   <button
     @click="$emit('toggle', asset)"
-    class="w-full text-left px-3 py-2 rounded-lg border transition-all duration-150"
+    class="w-full text-left px-3 py-2.5 rounded-lg border transition-all duration-150"
     :class="
       selected
         ? 'border-gold-500 dark:border-gold-500 bg-gold-50 dark:bg-gold-900/20 shadow-sm'
@@ -13,8 +13,9 @@
       <span
         class="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide"
         :class="selected ? 'bg-gold-600 text-white' : typeColor"
-        >{{ shortType }}</span
       >
+        {{ shortType }}
+      </span>
       <span
         class="text-xs font-semibold truncate"
         :class="
@@ -23,20 +24,22 @@
             : 'text-gray-900 dark:text-white'
         "
         :title="asset.name"
-        >{{ asset.name }}</span
       >
+        {{ asset.name }}
+      </span>
     </div>
-    <!-- Line 2: Description -->
+
+    <!-- Line 2: Description (full, wraps naturally) -->
     <p
-      class="text-[11px] mt-0.5 line-clamp-1"
+      v-if="asset.description"
+      class="text-[11px] mt-1 leading-relaxed"
       :class="
         selected
           ? 'text-gold-700 dark:text-gold-300'
           : 'text-gray-500 dark:text-gray-400'
       "
-      :title="asset.description"
     >
-      {{ asset.description || "—" }}
+      {{ asset.description }}
     </p>
   </button>
 </template>

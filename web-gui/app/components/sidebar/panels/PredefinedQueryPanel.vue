@@ -83,7 +83,6 @@
         </svg>
       </template>
       <template #title>Filters</template>
-
       <QueryFilters
         :is-executing="queryStore.isExecuting"
         @search="executeQuery"
@@ -92,7 +91,10 @@
     </AppAccordion>
 
     <!-- Results section -->
-    <div v-if="queryStore.results || queryStore.error">
+    <section v-if="queryStore.results || queryStore.error">
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+        Results
+      </h3>
       <!-- Error state -->
       <div
         v-if="queryStore.error"
@@ -124,12 +126,15 @@
       </div>
 
       <!-- Success state -->
-      <div v-else-if="queryStore.results">
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+      <div v-else-if="queryStore.results" class="space-y-3">
+        <p class="text-xs text-gray-500 dark:text-gray-400">
           {{ queryStore.results.count }} result(s) ·
           {{ queryStore.results.executionTime }}ms
         </p>
-        <div class="flex flex-col gap-1.5 overflow-y-auto pr-1 scrollbar-thin">
+        <!-- Scrollable list capped before scrolling -->
+        <div
+          class="flex flex-col gap-1.5 max-h-[600px] overflow-y-auto pr-1 scrollbar-thin"
+        >
           <AssetCard
             v-for="asset in queryStore.results.data"
             :key="asset.id"
@@ -139,7 +144,7 @@
           />
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
@@ -159,7 +164,6 @@ const filterStore = usePredefinedQueryStore();
 
 // ─── Local state ──────────────────────────────────────────────────────────────
 
-/** Only one asset can be selected at a time */
 const selectedAsset = ref<any | null>(null);
 
 // ─── Query builder ────────────────────────────────────────────────────────────
@@ -223,8 +227,6 @@ function resetAll() {
 function toggleAssetSelection(asset: any) {
   selectedAsset.value = selectedAsset.value?.id === asset.id ? null : asset;
 }
-
-// ─── Expose ───────────────────────────────────────────────────────────────────
 
 defineExpose({ selectedAsset });
 </script>

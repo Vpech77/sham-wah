@@ -104,7 +104,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useUiStore, type DisplayMode } from "@/stores/ui";
+import { useUiStore, type DisplayMode } from "~/stores/ui";
 import CypherPanel from "./panels/CypherPanel.vue";
 import ChatbotPanel from "./panels/ChatbotPanel.vue";
 import HumanActivityPanel from "./panels/PredefinedQueryPanel.vue";

@@ -182,7 +182,7 @@
 import {
   usePredefinedQueryStore,
   ASSET_TYPES,
-} from "~/stores/predefinedQueryStore";
+} from "~/stores/predefined-query-store";
 
 defineProps<{ isExecuting: boolean }>();
 

@@ -150,8 +150,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { useHumanActivitiesStore } from "~/stores/humanActivityStore";
-import { usePredefinedQueryStore } from "~/stores/predefinedQueryStore";
+import { useHumanActivitiesStore } from "~/stores/query-result-store";
+import { usePredefinedQueryStore } from "~/stores/predefined-query-store";
 import AppAccordion from "~/components/sidebar/panels/AppAccordion.vue";
 import ConceptSelector from "./predefinedQueryPanel/ConceptSelector.vue";
 import QueryFilters from "./predefinedQueryPanel/QueryFilters.vue";

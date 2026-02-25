@@ -250,7 +250,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { useHumanActivitiesStore } from "~/stores/humanActivityStore";
+import { useHumanActivitiesStore } from "~/stores/query-result-store";
 import AssetCard from "./predefinedQueryPanel/AssetCard.vue";
 import IconGitHub from "~/components/icons/IconGitHub.vue";
 import IconHiking from "~/components/icons/IconHiking.vue";

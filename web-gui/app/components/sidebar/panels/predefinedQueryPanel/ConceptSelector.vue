@@ -37,7 +37,7 @@
 import {
   usePredefinedQueryStore,
   CONCEPT_CATEGORIES,
-} from "~/stores/predefinedQueryStore";
+} from "~/stores/predefined-query-store";
 
 defineProps<{ disabled?: boolean }>();
 

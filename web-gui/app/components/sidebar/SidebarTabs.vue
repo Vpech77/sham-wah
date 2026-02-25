@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUiStore, type SidebarTab } from "@/stores/ui";
+import { useUiStore, type SidebarTab } from "~/stores/ui";
 import SidebarTabItem from "./SidebarTabItem.vue";
 
 const ui = useUiStore();

@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { DigitalAsset } from "~/stores/humanActivityStore";
+import type { DigitalAsset } from "~/stores/query-result-store";
 
 const props = defineProps<{
   asset: DigitalAsset;

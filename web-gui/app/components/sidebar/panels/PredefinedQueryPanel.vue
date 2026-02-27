@@ -90,11 +90,64 @@
       />
     </AppAccordion>
 
+    <!-- Max results — outside filters, controls result count -->
+    <div class="flex items-center gap-2">
+      <label
+        for="results-limit"
+        class="text-xs font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap shrink-0"
+      >
+        Max results
+      </label>
+      <select
+        id="results-limit"
+        :value="filterStore.filters.limit"
+        :disabled="queryStore.isExecuting"
+        class="w-24 px-2 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs focus:ring-2 focus:ring-gold-500 dark:focus:ring-gold-400 focus:border-transparent transition-all disabled:opacity-50"
+        @change="
+          filterStore.setFilters({
+            limit: Number(($event.target as HTMLSelectElement).value),
+          })
+        "
+      >
+        <option v-for="n in [10, 15, 25, 50, 100]" :key="n" :value="n">
+          {{ n }}
+        </option>
+      </select>
+    </div>
+
     <!-- Results section -->
     <section v-if="queryStore.results || queryStore.error">
-      <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">
-        Results
-      </h3>
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+          Results
+          <span
+            v-if="queryStore.results"
+            class="ml-1.5 text-xs font-normal text-gray-400 dark:text-gray-500"
+          >
+            ({{ queryStore.results.count }})
+          </span>
+        </h3>
+        <button
+          class="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+          title="Clear results"
+          @click="clearResults"
+        >
+          <svg
+            class="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+          Clear
+        </button>
+      </div>
       <!-- Error state -->
       <div
         v-if="queryStore.error"
@@ -128,7 +181,6 @@
       <!-- Success state -->
       <div v-else-if="queryStore.results" class="space-y-3">
         <p class="text-xs text-gray-500 dark:text-gray-400">
-          {{ queryStore.results.count }} result(s) ·
           {{ queryStore.results.executionTime }}ms
         </p>
         <!-- Scrollable list capped before scrolling -->
@@ -216,6 +268,11 @@ async function executeQuery() {
     assetType: filterStore.filters.assetType,
     limit: filterStore.filters.limit,
   });
+}
+
+function clearResults() {
+  queryStore.clearResults();
+  selectedAsset.value = null;
 }
 
 function resetAll() {

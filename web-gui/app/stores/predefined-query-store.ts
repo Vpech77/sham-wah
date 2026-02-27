@@ -17,6 +17,8 @@ export interface ConceptCategory {
 export interface QueryFilters {
   limit: number;
   assetType: string;
+  dateStart: string | null;
+  dateEnd: string | null;
 }
 
 // ─── Static data ──────────────────────────────────────────────────────
@@ -71,7 +73,12 @@ export const usePredefinedQueryStore = defineStore("predefinedQuery", () => {
   // State
   const selectedCategoryName = ref<string>("");
   const selectedConceptValues = ref<string[]>([]);
-  const filters = ref<QueryFilters>({ limit: 15, assetType: "all" });
+  const filters = ref<QueryFilters>({
+    limit: 15,
+    assetType: "all",
+    dateStart: null,
+    dateEnd: null,
+  });
 
   // Getters
   const selectedCategory = computed(
@@ -128,7 +135,12 @@ export const usePredefinedQueryStore = defineStore("predefinedQuery", () => {
   function reset() {
     selectedCategoryName.value = "";
     selectedConceptValues.value = [];
-    filters.value = { limit: 15, assetType: "all" };
+    filters.value = {
+      limit: 10,
+      assetType: "all",
+      dateStart: null,
+      dateEnd: null,
+    };
   }
 
   return {

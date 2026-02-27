@@ -1,55 +1,83 @@
 <template>
   <div class="space-y-3">
-    <!-- Limit + Resource type -->
-    <div class="grid grid-cols-2 gap-3">
-      <div>
-        <label
-          class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5"
+    <!-- Resource type -->
+    <div>
+      <label
+        class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5"
+      >
+        Resource Type
+      </label>
+      <select
+        :value="store.filters.assetType"
+        :disabled="isExecuting"
+        class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-gold-500 dark:focus:ring-gold-400 focus:border-transparent transition-all disabled:opacity-50"
+        @change="
+          store.setFilters({
+            assetType: ($event.target as HTMLSelectElement).value,
+          })
+        "
+      >
+        <option
+          v-for="type in ASSET_TYPES"
+          :key="type.value"
+          :value="type.value"
         >
-          Limit
-        </label>
-        <input
-          :value="store.filters.limit"
-          type="number"
-          min="1"
-          max="100"
-          :disabled="isExecuting"
-          class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-gold-500 dark:focus:ring-gold-400 focus:border-transparent transition-all disabled:opacity-50"
-          @change="
-            store.setFilters({
-              limit: Number(($event.target as HTMLInputElement).value),
-            })
-          "
-        />
-      </div>
-      <div>
-        <label
-          class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5"
-        >
-          Resource Type
-        </label>
-        <select
-          :value="store.filters.assetType"
-          :disabled="isExecuting"
-          class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-gold-500 dark:focus:ring-gold-400 focus:border-transparent transition-all disabled:opacity-50"
-          @change="
-            store.setFilters({
-              assetType: ($event.target as HTMLSelectElement).value,
-            })
-          "
-        >
-          <option
-            v-for="type in ASSET_TYPES"
-            :key="type.value"
-            :value="type.value"
-          >
-            {{ type.label }}
-          </option>
-        </select>
-      </div>
+          {{ type.label }}
+        </option>
+      </select>
     </div>
 
-    <!-- Specific concepts (only visible when a category is selected) -->
+    <!-- Date range -->
+    <div>
+      <div class="flex items-center justify-between mb-1.5">
+        <label class="text-xs font-medium text-gray-600 dark:text-gray-400">
+          Date Range
+        </label>
+        <button
+          v-if="store.filters.dateStart || store.filters.dateEnd"
+          class="text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+          @click="store.setFilters({ dateStart: null, dateEnd: null })"
+        >
+          Clear
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <span class="block text-[11px] text-gray-400 dark:text-gray-500 mb-1"
+            >From</span
+          >
+          <input
+            :value="store.filters.dateStart ?? ''"
+            type="datetime-local"
+            :max="store.filters.dateEnd ?? undefined"
+            :disabled="isExecuting"
+            class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs focus:ring-2 focus:ring-gold-500 dark:focus:ring-gold-400 focus:border-transparent transition-all disabled:opacity-50"
+            @change="
+              store.setFilters({
+                dateStart: ($event.target as HTMLInputElement).value || null,
+              })
+            "
+          />
+        </div>
+        <div>
+          <span class="block text-[11px] text-gray-400 dark:text-gray-500 mb-1"
+            >To</span
+          >
+          <input
+            :value="store.filters.dateEnd ?? ''"
+            type="datetime-local"
+            :min="store.filters.dateStart ?? undefined"
+            :disabled="isExecuting"
+            class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs focus:ring-2 focus:ring-gold-500 dark:focus:ring-gold-400 focus:border-transparent transition-all disabled:opacity-50"
+            @change="
+              store.setFilters({
+                dateEnd: ($event.target as HTMLInputElement).value || null,
+              })
+            "
+          />
+        </div>
+      </div>
+    </div>
     <Transition name="fade-slide">
       <div
         v-if="store.hasCategorySelected && store.availableConcepts.length > 0"
@@ -61,11 +89,11 @@
             <p class="text-xs font-medium text-gray-700 dark:text-gray-300">
               Specific concepts
             </p>
-            <span
+            <!-- <span
               class="px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
             >
               Optional
-            </span>
+            </span> -->
           </div>
           <button
             v-if="store.selectedConceptValues.length > 0"
@@ -75,12 +103,6 @@
             Clear ({{ store.selectedConceptValues.length }})
           </button>
         </div>
-
-        <!-- Hint -->
-        <p class="text-xs text-gray-500 dark:text-gray-400">
-          Leave empty to search all
-          {{ store.selectedCategory?.label.toLowerCase() }} concepts
-        </p>
 
         <!-- Concept toggle buttons -->
         <div class="grid grid-cols-2 gap-2">

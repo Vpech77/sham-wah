@@ -2,9 +2,8 @@
   <div
     class="relative w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
   >
-    <!-- Controls Overlay -->
     <div class="absolute top-4 right-4 z-10 flex flex-col gap-2">
-      <!-- Zoom Controls -->
+      <!-- Zoom Controls card -->
       <div
         class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-1"
       >
@@ -69,7 +68,7 @@
         </button>
       </div>
 
-      <!-- View Options -->
+      <!-- View Options card -->
       <div
         class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-1"
       >
@@ -96,7 +95,7 @@
       </div>
     </div>
 
-    <!-- Info Panel -->
+    <!-- ── Info Node Panel ── -->
     <div
       v-if="selectedNode"
       class="absolute top-4 left-4 z-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 max-w-xs"
@@ -133,90 +132,290 @@
       </div>
     </div>
 
-    <!-- Graph Container -->
     <div ref="graphContainer" class="w-full h-full"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import * as d3 from "d3";
+
+// ─── TypeScript Interfaces ────────────────────────────────────────────────────
+
+interface NodeDatum extends d3.SimulationNodeDatum {
+  id: string;
+  label: string;
+  color: string;
+  size: number;
+  type?: string;
+}
+
+interface LinkDatum extends d3.SimulationLinkDatum<NodeDatum> {
+  source: string | NodeDatum;
+  target: string | NodeDatum;
+}
 
 const graphContainer = ref<HTMLDivElement | null>(null);
 const showLabels = ref(true);
-const selectedNode = ref<any>(null);
+const selectedNode = ref<{
+  label: string;
+  degree: number;
+  type: string;
+} | null>(null);
 
-let sigma: any = null;
-let graph: any = null;
+let svgEl: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+let zoomBehavior: d3.ZoomBehavior<SVGSVGElement, unknown> | null = null;
+let simulation: d3.Simulation<NodeDatum, LinkDatum> | null = null;
+let labelSelection: d3.Selection<
+  SVGTextElement,
+  NodeDatum,
+  SVGGElement,
+  unknown
+> | null = null;
+let themeObserver: MutationObserver | null = null; // watches for dark/light mode changes
 
-onMounted(async () => {
-  const Sigma = (await import("sigma")).default;
-  const Graph = (await import("graphology")).default;
+// ─── Dark Mode Helper ─────────────────────────────────────────────────────────
 
-  graph = new Graph();
+const getLabelColor = (): string =>
+  document.documentElement.classList.contains("dark") ? "#D1D5DB" : "#374151"; // gray-300 and gray-700
 
-  // Add sample nodes
-  graph.addNode("n1", {
-    x: 0,
-    y: 0,
-    size: 10,
-    label: "Node 1",
-    color: "#3B82F6",
+onMounted(() => {
+  if (!graphContainer.value) return;
+
+  const nodes: NodeDatum[] = [
+    { id: "n1", label: "Node 1", color: "#3B82F6", size: 10 },
+    {
+      id: "n2",
+      label: "Node 2",
+      color: "#8B5CF6",
+      size: 10,
+      type: "Secondary",
+    },
+    { id: "n3", label: "Node 3", color: "#10B981", size: 14, type: "Hub" },
+    { id: "n4", label: "Node 4", color: "#F59E0B", size: 8 },
+  ];
+
+  const links: LinkDatum[] = [
+    { source: "n1", target: "n2" },
+    { source: "n1", target: "n3" },
+    { source: "n2", target: "n3" },
+    { source: "n3", target: "n4" },
+  ];
+
+  const { width, height } = graphContainer.value.getBoundingClientRect();
+
+  svgEl = d3
+    .select(graphContainer.value)
+    .append("svg")
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .attr("viewBox", `0 0 ${width} ${height}`);
+
+  const g = svgEl.append("g").attr("class", "graph-root");
+
+  // ── ZOOM & PAN ─────────────────────────────────────────────────────────
+
+  zoomBehavior = d3
+    .zoom<SVGSVGElement, unknown>()
+    .scaleExtent([0.1, 8])
+    .on("zoom", (event) => {
+      g.attr("transform", event.transform);
+    });
+
+  // Attaching the behavior to the SVG means the whole surface is pannable.
+  svgEl.call(zoomBehavior);
+
+  // ── ARROWHEAD MARKER (optional — for directed graphs) ──────────────────
+
+  svgEl
+    .append("defs")
+    .append("marker")
+    .attr("id", "arrowhead")
+    .attr("viewBox", "-0 -5 10 10")
+    .attr("refX", 20) // how far back from the target the arrow sits
+    .attr("refY", 0)
+    .attr("orient", "auto") // rotates to follow the line direction
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .append("path")
+    .attr("d", "M 0,-5 L 10,0 L 0,5") // a simple triangle
+    .attr("fill", "#94A3B8");
+
+  // ── LINKS (edges) ──────────────────────────────────────────────────────
+
+  const link = g
+    .append("g")
+    .attr("class", "links")
+    .selectAll<SVGLineElement, LinkDatum>("line")
+    .data(links)
+    .join("line")
+    .attr("stroke", "#CBD5E1")
+    .attr("stroke-width", 1.5)
+    .attr("stroke-opacity", 0.8)
+    .attr("marker-end", "url(#arrowhead)");
+
+  // ── NODE GROUPS ────────────────────────────────────────────────────────
+
+  const nodeGroup = g
+    .append("g")
+    .attr("class", "nodes")
+    .selectAll<SVGGElement, NodeDatum>("g")
+    .data(nodes)
+    .join("g")
+    .attr("class", "node")
+    .style("cursor", "pointer")
+
+    // ── DRAG BEHAVIOR ──────────────────────────────────────────────────────
+    .call(
+      d3
+        .drag<SVGGElement, NodeDatum>()
+        .on("start", (event, d) => {
+          if (!event.active) simulation?.alphaTarget(0.3).restart();
+          d.fx = d.x;
+          d.fy = d.y;
+        })
+        .on("drag", (event, d) => {
+          d.fx = event.x;
+          d.fy = event.y;
+        })
+        .on("end", (event, d) => {
+          if (!event.active) simulation?.alphaTarget(0);
+          d.fx = null;
+          d.fy = null;
+        }),
+    );
+
+  nodeGroup
+    .append("circle")
+    .attr("r", (d) => d.size)
+    .attr("fill", (d) => d.color)
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 2);
+
+  // ── HOVER HIGHLIGHT ────────────────────────────────────────────────────
+
+  nodeGroup
+    .on("mouseenter", function () {
+      d3.select(this)
+        .select("circle")
+        .attr("stroke", "#60A5FA")
+        .attr("stroke-width", 3);
+    })
+    .on("mouseleave", function () {
+      d3.select(this)
+        .select("circle")
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 2);
+    });
+
+  // ── NODE CLICK → INFO PANEL ────────────────────────────────────────────
+
+  nodeGroup.on("click", (event, d) => {
+    event.stopPropagation();
+    const degree = links.filter(
+      (l) =>
+        (l.source as NodeDatum).id === d.id ||
+        (l.target as NodeDatum).id === d.id,
+    ).length;
+    selectedNode.value = { label: d.label, degree, type: d.type ?? "Default" };
   });
-  graph.addNode("n2", {
-    x: 1,
-    y: 1,
-    size: 10,
-    label: "Node 2",
-    color: "#8B5CF6",
-  });
-  graph.addEdge("n1", "n2");
 
-  sigma = new Sigma(graph, graphContainer.value!, {
-    renderLabels: showLabels.value,
+  // Clicking empty SVG space deselects any highlighted node.
+  svgEl.on("click", () => {
+    selectedNode.value = null;
   });
 
-  sigma.on("clickNode", ({ node }: { node: string }) => {
-    const nodeData = graph.getNodeAttributes(node);
-    selectedNode.value = {
-      label: nodeData.label,
-      degree: graph.degree(node),
-      type: nodeData.type || "Default",
-    };
+  // ── LABELS ─────────────────────────────────────────────────────────────
+
+  labelSelection = g
+    .append("g")
+    .attr("class", "labels")
+    .selectAll<SVGTextElement, NodeDatum>("text")
+    .data(nodes)
+    .join("text")
+    .text((d) => d.label)
+    .attr("font-size", 11)
+    .attr("fill", getLabelColor()) // dark-mode aware initial colour
+    .attr("text-anchor", "middle")
+    .attr("dy", (d) => d.size + 14)
+    .attr("pointer-events", "none")
+    .attr("display", showLabels.value ? null : "none");
+
+  simulation = d3
+    .forceSimulation<NodeDatum>(nodes)
+    .force(
+      "link",
+      d3
+        .forceLink<NodeDatum, LinkDatum>(links)
+        .id((d) => d.id)
+        .distance(100),
+    )
+    .force("charge", d3.forceManyBody().strength(-300))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force(
+      "collision",
+      d3.forceCollide().radius((d) => (d as NodeDatum).size + 10),
+    )
+    // tick fires ~60 times/sec while the simulation is "hot" (alpha > alphaMin).
+    // We imperatively update every SVG element's position here.
+    .on("tick", () => {
+      link
+        .attr("x1", (d) => (d.source as NodeDatum).x ?? 0)
+        .attr("y1", (d) => (d.source as NodeDatum).y ?? 0)
+        .attr("x2", (d) => (d.target as NodeDatum).x ?? 0)
+        .attr("y2", (d) => (d.target as NodeDatum).y ?? 0);
+
+      // translate() moves the whole node group (circle + any future children)
+      nodeGroup.attr("transform", (d) => `translate(${d.x ?? 0},${d.y ?? 0})`);
+
+      // Labels get the same translation so they track their node
+      labelSelection?.attr(
+        "transform",
+        (d) => `translate(${d.x ?? 0},${d.y ?? 0})`,
+      );
+    });
+
+  // ── DARK MODE OBSERVER ─────────────────────────────────────────────────
+
+  themeObserver = new MutationObserver(() => {
+    labelSelection?.attr("fill", getLabelColor());
+  });
+
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
   });
 });
 
 onBeforeUnmount(() => {
-  if (sigma) {
-    sigma.kill();
-  }
+  simulation?.stop();
+  svgEl?.remove();
+  themeObserver?.disconnect();
 });
 
 const zoomIn = () => {
-  if (sigma) {
-    const camera = sigma.getCamera();
-    camera.animatedZoom({ duration: 300 });
-  }
+  if (!svgEl || !zoomBehavior) return;
+  svgEl.transition().duration(300).call(zoomBehavior.scaleBy, 1.4);
 };
 
 const zoomOut = () => {
-  if (sigma) {
-    const camera = sigma.getCamera();
-    camera.animatedUnzoom({ duration: 300 });
-  }
+  if (!svgEl || !zoomBehavior) return;
+  svgEl
+    .transition()
+    .duration(300)
+    .call(zoomBehavior.scaleBy, 1 / 1.4);
 };
 
 const resetView = () => {
-  if (sigma) {
-    const camera = sigma.getCamera();
-    camera.animatedReset({ duration: 500 });
-  }
+  if (!svgEl || !zoomBehavior) return;
+  svgEl
+    .transition()
+    .duration(500)
+    .call(zoomBehavior.transform, d3.zoomIdentity);
 };
 
 const toggleLabels = () => {
   showLabels.value = !showLabels.value;
-  if (sigma) {
-    sigma.setSetting("renderLabels", showLabels.value);
-    sigma.refresh();
-  }
+  labelSelection?.attr("display", showLabels.value ? null : "none");
 };
 </script>

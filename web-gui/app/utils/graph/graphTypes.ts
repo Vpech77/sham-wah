@@ -4,18 +4,20 @@ export type NodeShape = "circle" | "rect";
 
 export interface NodeDatum extends d3.SimulationNodeDatum {
   id: string;
-  label: string; // short truncated label shown outside the node
-  fullName: string; // original camelCase name shown in the info panel
-  description: string; // truncated, shown inside rect nodes
-  fullDescription: string; // original, shown in the info panel
+  label: string;
+  fullName: string;
+  description: string; // truncated comment — shown inside rect nodes
+  fullDescription: string; // full comment — shown in the info panel
+  publisher?: string;
+  location?: string[];
   color: string;
-  size: number; // circle radius (ignored for rect)
+  size: number;
   shape: NodeShape;
-  width?: number; // rect only
-  height?: number; // rect only
+  width?: number;
+  height?: number;
   type: string;
   concepts: string[];
-  isSelected?: boolean; // true for the focused / origin node
+  isSelected?: boolean;
 }
 
 export interface LinkDatum extends d3.SimulationLinkDatum<NodeDatum> {

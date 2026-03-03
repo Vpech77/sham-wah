@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, shallowRef } from "vue";
-import type { DigitalAsset } from "./query-result-store";
+import { MOCK_ASSETS, type DigitalAsset } from "./query-result-store"; // ← import shared mock
 import type { NodeDatum, LinkDatum } from "~/utils/graph/graphTypes";
 import { buildGraphData, type RawEdge } from "~/utils/graph/graphAdapter";
 
@@ -8,6 +8,122 @@ interface NeighborGraph {
   nodes: DigitalAsset[];
   edges: RawEdge[];
 }
+
+const ASSET_BY_ID = Object.fromEntries(MOCK_ASSETS.map((a) => [a.id, a]));
+
+const FEEDBACK_ASSETS: DigitalAsset[] = [
+  {
+    id: "feedback-hikersfoot",
+    type: "UserFeedback",
+    name: "User Feedback",
+    comment:
+      "The process in this paper can probably be reproduced to generate HikersFootprint in Les Bauges and MontBlanc, using OutdoorVision data as an input",
+    concepts: [],
+  },
+  {
+    id: "feedback-artifacts",
+    type: "UserFeedback",
+    name: "User Feedback",
+    comment:
+      "Artifacts exist in dense urban areas above a certain zoom level due to lower GPS accuracy in those areas",
+    concepts: [],
+  },
+];
+const FEEDBACK_BY_ID = Object.fromEntries(
+  FEEDBACK_ASSETS.map((a) => [a.id, a]),
+);
+
+// ─── Mock topology — only ids + edges, no duplicated asset data ───────────────
+
+const MOCK_NEIGHBOR_GRAPHS: Record<
+  string,
+  { nodeIds: string[]; edges: RawEdge[] }
+> = {
+  "ov-map-service": {
+    nodeIds: [
+      "outdoorvision-catalog",
+      "ov-tracks-2024",
+      "paper-vandamme-2024",
+      "feedback-hikersfoot",
+      "feedback-artifacts",
+    ],
+    edges: [
+      {
+        source: "outdoorvision-catalog",
+        target: "ov-map-service",
+        label: "PROVIDES",
+      },
+      {
+        source: "outdoorvision-catalog",
+        target: "ov-tracks-2024",
+        label: "PROVIDES",
+      },
+      {
+        source: "feedback-hikersfoot",
+        target: "paper-vandamme-2024",
+        label: "REFERENCES",
+      },
+      {
+        source: "feedback-hikersfoot",
+        target: "ov-tracks-2024",
+        label: "REFERENCES",
+      },
+      {
+        source: "feedback-artifacts",
+        target: "ov-map-service",
+        label: "ANNOTATES",
+      },
+    ],
+  },
+
+  "ov-tracks-2024": {
+    nodeIds: ["ov-map-service", "paper-vandamme-2024"],
+    edges: [
+      { source: "ov-tracks-2024", target: "ov-map-service", label: "FEEDS" },
+      {
+        source: "paper-vandamme-2024",
+        target: "ov-tracks-2024",
+        label: "REFERENCES",
+      },
+    ],
+  },
+
+  "paper-marchand-2025": {
+    nodeIds: ["ov-tracks-2024", "skilift-counters"],
+    edges: [
+      {
+        source: "paper-marchand-2025",
+        target: "ov-tracks-2024",
+        label: "USES",
+      },
+      {
+        source: "paper-marchand-2025",
+        target: "skilift-counters",
+        label: "USES",
+      },
+    ],
+  },
+};
+
+const EXTRA_ASSETS: DigitalAsset[] = [
+  {
+    id: "outdoorvision-catalog",
+    type: "Catalog",
+    name: "OutdoorVision",
+    comment:
+      "The Outdoorvision platform aggregating GPS traces from connected outdoor apps.",
+    concepts: ["Outdoorvision", "Catalog"],
+  },
+];
+const EXTRA_BY_ID = Object.fromEntries(EXTRA_ASSETS.map((a) => [a.id, a]));
+
+function resolveAll(ids: string[]): DigitalAsset[] {
+  return ids
+    .map((id) => ASSET_BY_ID[id] ?? FEEDBACK_BY_ID[id] ?? EXTRA_BY_ID[id])
+    .filter((a): a is DigitalAsset => a !== undefined);
+}
+
+// ─── Store ────────────────────────────────────────────────────────────────────
 
 export const useGraphStore = defineStore("graph", () => {
   const selectedAsset = ref<DigitalAsset | null>(null);
@@ -42,7 +158,9 @@ export const useGraphStore = defineStore("graph", () => {
   // Replace with: fetch(`/api/neo4j/neighbors/${assetId}`).then(r => r.json())
   async function fetchNeighborGraph(assetId: string): Promise<NeighborGraph> {
     await new Promise((r) => setTimeout(r, 400));
-    return MOCK_NEIGHBOR_GRAPHS[assetId] ?? { nodes: [], edges: [] };
+    const mock = MOCK_NEIGHBOR_GRAPHS[assetId];
+    if (!mock) return { nodes: [], edges: [] };
+    return { nodes: resolveAll(mock.nodeIds), edges: mock.edges };
   }
 
   return {
@@ -55,137 +173,3 @@ export const useGraphStore = defineStore("graph", () => {
     clearGraph,
   };
 });
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const MOCK_NEIGHBOR_GRAPHS: Record<string, NeighborGraph> = {
-  "ov-map-service": {
-    nodes: [
-      {
-        id: "outdoorvision-catalog",
-        type: "Catalog",
-        name: "OutdoorVision",
-        description:
-          "The Outdoorvision platform aggregating GPS traces from connected outdoor apps.",
-        concepts: ["Outdoorvision", "Catalog"],
-      },
-      {
-        id: "ov-tracks-2024",
-        type: "Dataset",
-        name: "OVTracksMontBlancBauges2024",
-        description: "GPS traces from Outdoorvision, cleaned and filtered.",
-        concepts: ["Outdoorvision", "GPS Traces"],
-      },
-      {
-        id: "paper-vandamme-2024",
-        type: "ScientificPaper",
-        name: "SIGSPATIAL24VanDammeEtAl2024",
-        description:
-          "A metrological analysis of a modular and iterative aggregation algorithm of GNSS trajectories.",
-        concepts: ["GNSS", "Trajectories"],
-      },
-      {
-        id: "feedback-hikersfoot",
-        type: "UserFeedback",
-        name: "User Feedback",
-        description:
-          "The process in this paper can probably be reproduced to generate HikersFootprint in Les Bauges and MontBlanc, using OutdoorVision data as an input",
-        concepts: [],
-      },
-      {
-        id: "feedback-artifacts",
-        type: "UserFeedback",
-        name: "User Feedback",
-        description:
-          "Artifacts exist in dense urban areas above a certain zoom level due to lower GPS accuracy in those areas",
-        concepts: [],
-      },
-    ],
-    edges: [
-      {
-        source: "outdoorvision-catalog",
-        target: "ov-map-service",
-        label: "PROVIDES",
-      },
-      {
-        source: "outdoorvision-catalog",
-        target: "ov-tracks-2024",
-        label: "PROVIDES",
-      },
-      {
-        source: "feedback-hikersfoot",
-        target: "paper-vandamme-2024",
-        label: "REFERENCES",
-      },
-      {
-        source: "feedback-hikersfoot",
-        target: "ov-tracks-2024",
-        label: "REFERENCES",
-      },
-      {
-        source: "feedback-artifacts",
-        target: "ov-map-service",
-        label: "ANNOTATES",
-      },
-    ],
-  },
-
-  "ov-tracks-2024": {
-    nodes: [
-      {
-        id: "ov-map-service",
-        type: "DataService",
-        name: "OVRecreationalUserMapService",
-        description:
-          "Displays aggregated paths of GPS tracks from Outdoorvision.",
-        concepts: ["Map Service", "Outdoorvision"],
-      },
-      {
-        id: "paper-vandamme-2024",
-        type: "ScientificPaper",
-        name: "SIGSPATIAL24VanDammeEtAl2024",
-        description: "A metrological analysis of GNSS trajectory aggregation.",
-        concepts: ["GNSS", "Trajectories"],
-      },
-    ],
-    edges: [
-      { source: "ov-tracks-2024", target: "ov-map-service", label: "FEEDS" },
-      {
-        source: "paper-vandamme-2024",
-        target: "ov-tracks-2024",
-        label: "REFERENCES",
-      },
-    ],
-  },
-
-  "paper-marchand-2025": {
-    nodes: [
-      {
-        id: "ov-tracks-2024",
-        type: "Dataset",
-        name: "OVTracksMontBlancBauges2024",
-        description: "GPS traces from Outdoorvision, cleaned and filtered.",
-        concepts: ["Outdoorvision", "GPS Traces"],
-      },
-      {
-        id: "skilift-counters",
-        type: "Dataset",
-        name: "SkiLiftCountersMontBlanc2008To2024",
-        description: "Counting data for each ski lift over a 10-year period.",
-        concepts: ["Ski Lift", "Counting"],
-      },
-    ],
-    edges: [
-      {
-        source: "paper-marchand-2025",
-        target: "ov-tracks-2024",
-        label: "USES",
-      },
-      {
-        source: "paper-marchand-2025",
-        target: "skilift-counters",
-        label: "USES",
-      },
-    ],
-  },
-};

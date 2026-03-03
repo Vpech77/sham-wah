@@ -204,19 +204,22 @@
 import { ref, computed, watch } from "vue";
 import { useHumanActivitiesStore } from "~/stores/query-result-store";
 import { usePredefinedQueryStore } from "~/stores/predefined-query-store";
+import { useGraphStore } from "~/stores/graph-store";
 import AppAccordion from "~/components/sidebar/panels/AppAccordion.vue";
 import ConceptSelector from "./predefinedQueryPanel/ConceptSelector.vue";
 import QueryFilters from "./predefinedQueryPanel/QueryFilters.vue";
 import AssetCard from "./predefinedQueryPanel/AssetCard.vue";
+import { storeToRefs } from "pinia";
 
 // ─── Stores ───────────────────────────────────────────────────────────────────
 
 const queryStore = useHumanActivitiesStore();
 const filterStore = usePredefinedQueryStore();
+const graphStore = useGraphStore();
 
 // ─── Local state ──────────────────────────────────────────────────────────────
 
-const selectedAsset = ref<any | null>(null);
+const { selectedAsset } = storeToRefs(graphStore);
 
 // ─── Query builder ────────────────────────────────────────────────────────────
 
@@ -252,7 +255,7 @@ watch(
   ],
   () => {
     queryStore.clearResults();
-    selectedAsset.value = null;
+    graphStore.clearGraph();
   },
   { deep: true },
 );
@@ -261,7 +264,7 @@ watch(
 
 async function executeQuery() {
   if (!filterStore.hasCategorySelected) return;
-  selectedAsset.value = null;
+  graphStore.clearGraph();
   await queryStore.executeQuery({
     query: generatedQuery.value,
     concepts: filterStore.effectiveConcepts,
@@ -272,17 +275,21 @@ async function executeQuery() {
 
 function clearResults() {
   queryStore.clearResults();
-  selectedAsset.value = null;
+  graphStore.clearGraph();
 }
 
 function resetAll() {
   filterStore.reset();
   queryStore.clearResults();
-  selectedAsset.value = null;
+  graphStore.clearGraph();
 }
 
-function toggleAssetSelection(asset: any) {
-  selectedAsset.value = selectedAsset.value?.id === asset.id ? null : asset;
+function toggleAssetSelection(asset: DigitalAsset) {
+  if (selectedAsset.value?.id === asset.id) {
+    graphStore.clearGraph();
+  } else {
+    graphStore.selectAsset(asset);
+  }
 }
 
 defineExpose({ selectedAsset });

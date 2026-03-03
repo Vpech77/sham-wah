@@ -229,20 +229,50 @@ onMounted(() => {
   if (!graphContainer.value) return;
 
   const nodes: NodeDatum[] = [
-    { id: "n1", label: "Node 1", color: "#3B82F6", size: 10 },
+    {
+      id: "n1",
+      label: "OVRecreationalUserMapService",
+      color: "#3B82F6",
+      type: "DataService",
+      size: 20,
+    },
     {
       id: "n2",
-      label: "Node 2",
-      color: "#8B5CF6",
-      size: 10,
-      type: "Secondary",
+      label: "OutdooVision",
+      color: "#7ed957",
+      size: 20,
+      type: "Catalog",
     },
-    { id: "n3", label: "Node 3", color: "#10B981", size: 24, type: "Hub" },
-    { id: "n4", label: "Node 4", color: "#F59E0B", size: 8 },
     {
-      id: "n5",
-      label: "Rectangle Node",
-      description: "Custom description text",
+      id: "n3",
+      label: "OVTracksMontBlancBauges2024",
+      color: "#5ce1e6",
+      size: 8,
+      type: "Dataset",
+    },
+    {
+      id: "n4",
+      label: "SIGSPATIAL24VanDammeEtAl2024",
+      color: "#10B981",
+      size: 8,
+      type: "Paper",
+    },
+    {
+      id: "u1",
+      label: "User Feedback",
+      description:
+        "The process proposed in this paper can probably be reproduced to generate HikersFootprint in Les Bauges and MontBlanc, using OutdoorVision data as an input",
+      color: "#EF4444",
+      size: 8,
+      shape: "rect",
+      width: 140,
+      height: 56,
+    },
+    {
+      id: "u2",
+      label: "User Feedback",
+      description:
+        "Artifacts exist in dense urban areas above a certain zoom level. This is because the accuracy of GPS tracks is lower in these areas, making the spatial information displayed less relevant",
       color: "#EF4444",
       size: 8,
       shape: "rect",
@@ -252,11 +282,11 @@ onMounted(() => {
   ];
 
   const links: LinkDatum[] = [
-    { source: "n1", target: "n2" },
-    { source: "n1", target: "n3" },
+    { source: "n2", target: "n1" },
     { source: "n2", target: "n3" },
-    { source: "n3", target: "n4" },
-    { source: "n4", target: "n5" },
+    { source: "u1", target: "n4" },
+    { source: "u1", target: "n3" },
+    { source: "u2", target: "n1" },
   ];
 
   const { width, height } = graphContainer.value.getBoundingClientRect();

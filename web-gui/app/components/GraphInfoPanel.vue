@@ -109,7 +109,7 @@
     </div>
 
     <!-- Concepts -->
-    <div v-if="node.concepts?.length" class="mb-4">
+    <!-- <div v-if="node.concepts?.length" class="mb-4">
       <div class="flex flex-wrap gap-1">
         <span
           v-for="concept in node.concepts"
@@ -119,7 +119,7 @@
           {{ concept }}
         </span>
       </div>
-    </div>
+    </div> -->
 
     <!-- Stats -->
     <div

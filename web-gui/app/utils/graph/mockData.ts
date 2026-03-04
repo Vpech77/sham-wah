@@ -8,6 +8,11 @@ export const MOCK_ASSETS: DigitalAsset[] = [
     name: "OVTracksMontBlancBauges2024",
     comment:
       "A set of tracks issued from Outdoorvision. GPS traces from Outdoorvision are cleaned and filtered.",
+    publisher: "Pôle ressources national sports de nature (PRNSN)",
+    location: [
+      "La Réserve nationale de chasse et de faune sauvage des Bauges",
+      "Massif du Mont Blanc, côté France",
+    ],
     concepts: ["Human Activity"],
   },
   {
@@ -22,7 +27,7 @@ export const MOCK_ASSETS: DigitalAsset[] = [
     type: "DataService",
     name: "OVRecreationalUserMapService",
     comment:
-      "This data feed enables visualization in the Outdoorvision application of aggregated GPS tracks obtained from services and connected devices used by outdoor sports and recreational users.",
+      "This data feed enables visualization in the Outdoorvision application of aggregated GPS tracks obtained from services and connected devices used by outdoor sports and recreational users. The aggregation is based exclusively on GPS traces and does not account for spatial constraints, such as the road network. It provides a precise representation of sports activity and the paths taken, including off-trail routes.",
     publisher: "Pôle ressources national sports de nature (PRNSN)",
     location: [
       "La Réserve nationale de chasse et de faune sauvage des Bauges",
@@ -34,7 +39,8 @@ export const MOCK_ASSETS: DigitalAsset[] = [
     id: "strava-map-service",
     type: "DataService",
     name: "StravaRecreationalUserMapService",
-    comment: "Shows aggregated public activities from the past year on Strava.",
+    comment:
+      "Displays the aggregated public activities recorded in Strava over the past year",
     concepts: ["Human Activity"],
   },
   {
@@ -48,7 +54,8 @@ export const MOCK_ASSETS: DigitalAsset[] = [
     id: "altirando-2025",
     type: "Dataset",
     name: "AltitudeRandoRoutesBauges2025",
-    comment: "A set of routes issued from altituderando.com.",
+    comment:
+      "A set of routes issued from altituderando.com in 2025 in the Bauges area.",
     concepts: ["Human Activity"],
   },
   {
@@ -71,15 +78,14 @@ export const MOCK_ASSETS: DigitalAsset[] = [
     type: "Dataset",
     name: "BDTopoSentiersBauges2025",
     comment:
-      "La BD TOPO® version 3.5 contient une description vectorielle 3D des éléments du territoire.",
+      "This dataset is extracted from the BDTOPO database, under the Transportation theme, from the Road Segment feature class, applying a filter on the “nature” attribute corresponding to the value “trail”.",
     concepts: ["Human Activity"],
   },
   {
     id: "paper-marchand-2025",
     type: "ScientificPaper",
-    name: "JournalOfPeopleAndNatureMarchandEtAl2025",
-    comment:
-      "Disturbance by massive sporting events in mountain areas: When and where matters for the protected Alpine ibex Capra ibex.",
+    name: "Disturbance by massive sporting events in mountain areas: When and where matters for the protected Alpine ibex Capra ibex",
+    comment: "No description available",
     concepts: ["Human Activity"],
   },
   {
@@ -98,13 +104,13 @@ const GRAPH_ONLY_ASSETS: DigitalAsset[] = [
     type: "Catalog",
     name: "OutdoorVision",
     comment:
-      "The Outdoorvision platform aggregating GPS traces from connected outdoor apps.",
+      "Outdoorvision https://outdoorvision.fr/; is a service to gather GPS tracks voluntarily shared by human during their outdoor activity through their accounts on their mobile device Garmin Connect™ / Polar Flow / Suunto APP (Appli Suunto) / Decathlon. The data are anonymized and published for a list of authorised users. It is offered by the French National Resource Centre for Ecological Transition and Outdoor Sports, a support mission of the Ministry of Sport. It results from a partnership between local authorities, sports federations and brands united around a non-profit programme.",
     concepts: [],
   },
   {
     id: "feedback-hikersfoot",
     type: "UserFeedback",
-    name: "User Feedback",
+    name: "TrackCollectionMergeForReplicability",
     comment:
       "The process in this paper can probably be reproduced to generate HikersFootprint in Les Bauges and MontBlanc, using OutdoorVision data as an input",
     concepts: [],
@@ -112,9 +118,9 @@ const GRAPH_ONLY_ASSETS: DigitalAsset[] = [
   {
     id: "feedback-artifacts",
     type: "UserFeedback",
-    name: "User Feedback",
+    name: "QualityOfOVRecreationalUserMapService",
     comment:
-      "Artifacts exist in dense urban areas above a certain zoom level due to lower GPS accuracy in those areas",
+      "Artifacts exist in dense urban areas above a certain zoom level. This is because the accuracy of GPS tracks is lower in these areas, making the spatial information displayed less relevant.",
     concepts: [],
   },
 ];

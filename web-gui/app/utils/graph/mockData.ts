@@ -90,14 +90,16 @@ export const MOCK_ASSETS: DigitalAsset[] = [
       "A metrological analysis of a modular and iterative aggregation algorithm of GNSS trajectories.",
     concepts: ["Human Activity"],
   },
-  // ── Nodes that appear in graphs but are not query results ─────────────────
+];
+
+const GRAPH_ONLY_ASSETS: DigitalAsset[] = [
   {
     id: "outdoorvision-catalog",
     type: "Catalog",
     name: "OutdoorVision",
     comment:
       "The Outdoorvision platform aggregating GPS traces from connected outdoor apps.",
-    concepts: ["Outdoorvision", "Catalog"],
+    concepts: [],
   },
   {
     id: "feedback-hikersfoot",
@@ -117,9 +119,8 @@ export const MOCK_ASSETS: DigitalAsset[] = [
   },
 ];
 
-// Fast lookup by id — used by graph-store to resolve neighbor ids
 export const ASSET_BY_ID: Record<string, DigitalAsset> = Object.fromEntries(
-  MOCK_ASSETS.map((a) => [a.id, a]),
+  [...MOCK_ASSETS, ...GRAPH_ONLY_ASSETS].map((a) => [a.id, a]),
 );
 
 export interface MockNeighborGraph {

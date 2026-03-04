@@ -136,7 +136,7 @@ export const usePredefinedQueryStore = defineStore("predefinedQuery", () => {
     selectedCategoryName.value = "";
     selectedConceptValues.value = [];
     filters.value = {
-      limit: 10,
+      limit: 15,
       assetType: "all",
       dateStart: null,
       dateEnd: null,

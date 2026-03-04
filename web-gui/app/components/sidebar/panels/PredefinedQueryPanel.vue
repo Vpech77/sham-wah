@@ -17,10 +17,10 @@
           class="flex-1 border-none ring-0 focus-within:ring-0 rounded-none"
         />
         <button
-          :disabled="queryStore.isExecuting || !filterStore.hasCategorySelected"
+          :disabled="!canSearch"
           class="shrink-0 px-3 flex items-center justify-center border-l border-gray-200 dark:border-gray-700 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
           :class="
-            queryStore.isExecuting
+            !canSearch
               ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'
               : 'bg-gradient-to-b from-gold-500 to-gold-600 text-white hover:from-gold-400 hover:to-gold-500 active:from-gold-600 active:to-gold-700'
           "
@@ -220,6 +220,18 @@ const graphStore = useGraphStore();
 // ─── Local state ──────────────────────────────────────────────────────────────
 
 const { selectedAsset } = storeToRefs(graphStore);
+
+const isMounted = ref(false);
+onMounted(() => {
+  isMounted.value = true;
+});
+
+const canSearch = computed(
+  () =>
+    isMounted.value &&
+    !queryStore.isExecuting &&
+    filterStore.hasCategorySelected,
+);
 
 // ─── Query builder ────────────────────────────────────────────────────────────
 

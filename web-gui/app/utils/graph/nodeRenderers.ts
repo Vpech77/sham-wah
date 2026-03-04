@@ -53,7 +53,7 @@ function drawRectNode(
   d: NodeDatum,
 ) {
   // ── Layout constants ────────────────────────────────────────────────────
-  const rw = d.width ?? 180; // card width in px
+  const rw = d.width ?? 220; // card width in px
   const padX = 5; // horizontal inner padding
   const padY = 10; // vertical inner padding
   const lineHeight = 15; // px between tspan baselines

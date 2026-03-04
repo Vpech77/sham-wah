@@ -10,15 +10,15 @@ export const TYPE_COLORS: Record<string, string> = {
 };
 
 const TYPE_SIZES: Record<string, number> = {
-  Dataset: 18,
-  DataService: 20,
-  ScientificPaper: 16,
-  Catalog: 22,
-  UserFeedback: 8,
+  Dataset: 50,
+  DataService: 50,
+  ScientificPaper: 50,
+  Catalog: 50,
+  UserFeedback: 50, // rect nodes — size unused visually but kept for collision
 };
 
 const DEFAULT_COLOR = "#94A3B8";
-const DEFAULT_SIZE = 14;
+const DEFAULT_SIZE = 50;
 
 export interface RawEdge {
   source: string;

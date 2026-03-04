@@ -80,7 +80,16 @@ export function useGraphRenderer(
       .scaleExtent([0.1, 8])
       .on("zoom", (e) => g.attr("transform", e.transform));
 
-    svgEl.call(zoomBehavior);
+    svgEl.call(zoomBehavior); // allow zoom scroll with mouse wheel
+
+    const initialScale = 1.3;
+
+    const initialTransform = d3.zoomIdentity
+      .translate(width / 2, height / 2)
+      .scale(initialScale)
+      .translate(-width / 2, -height / 2);
+
+    svgEl.call(zoomBehavior.transform, initialTransform);
 
     // ── Arrowhead marker
     svgEl
@@ -182,7 +191,10 @@ export function useGraphRenderer(
         d3
           .forceLink<NodeDatum, LinkDatum>(links)
           .id((d) => d.id)
-          .distance(150),
+          .distance((link) => {
+            const target = link.target as NodeDatum;
+            return target.shape === "rect" ? 300 : 200;
+          }),
       )
       .force("charge", d3.forceManyBody().strength(-380))
       .force("center", d3.forceCenter(width / 2, height / 2))

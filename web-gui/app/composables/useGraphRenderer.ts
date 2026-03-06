@@ -185,7 +185,7 @@ export function useGraphRenderer(
       clickedNode.value = null;
     });
 
-    // ── External labels (below each node, short label)
+    // ── External labels
     labelSel = g
       .append("g")
       .attr("class", "labels")

@@ -1,27 +1,63 @@
 import * as d3 from "d3";
 import type { NodeDatum } from "./graphTypes";
 
+// ── Typography constants ───────────────────────────────────────────────────────
+const CIRCLE_FONT_SIZE = 9;
+const CIRCLE_LINE_HEIGHT = 12;
+const CIRCLE_PX_PER_CHAR = 5.4; // at font-size 9
+
+const RECT_FONT_SIZE = 11;
+const RECT_LINE_HEIGHT = 15;
+const RECT_PX_PER_CHAR = 6.2; // at font-size 11
+
 export function drawNodeShape(
   group: d3.Selection<SVGGElement, NodeDatum, SVGGElement, unknown>,
 ) {
   group.each(function (d) {
-    const sel = d3.select(this);
-    if (d.shape === "rect") {
-      drawRectNode(sel as d3.Selection<SVGGElement, NodeDatum, any, any>, d);
+    const sel = d3.select(this) as d3.Selection<
+      SVGGElement,
+      NodeDatum,
+      any,
+      any
+    >;
+    if (d.shape === "rect") drawRectNode(sel, d);
+    else drawCircleNode(sel, d);
+  });
+}
+
+export function applyHoverHighlight(
+  sel: d3.Selection<SVGGElement, NodeDatum, any, any>,
+  entering: boolean,
+) {
+  sel.each(function (d) {
+    const shape = d3.select(this).select(".node-shape");
+    if (entering) {
+      shape.attr("stroke", "#60A5FA").attr("stroke-width", 3);
     } else {
-      drawCircleNode(sel as d3.Selection<SVGGElement, NodeDatum, any, any>, d);
+      const stroke =
+        d.shape === "rect" ? (d.isSelected ? d.color : "#1e293b") : "#fff";
+      shape.attr("stroke", stroke).attr("stroke-width", d.isSelected ? 3 : 2);
     }
   });
 }
+
+// ── Node renderers ────────────────────────────────────────────────────────────
 
 function drawCircleNode(
   sel: d3.Selection<SVGGElement, NodeDatum, any, any>,
   d: NodeDatum,
 ) {
+  // Wrap the full untruncated name to fit the circle's inner chord (~70% of diameter)
+  const maxChars = Math.floor((d.size * 1.4) / CIRCLE_PX_PER_CHAR);
+  const lines = wrapText(splitCamelCase(d.fullName), maxChars);
+
+  // Grow radius if the wrapped text is taller than the base size
+  const r = Math.max(d.size, (lines.length * CIRCLE_LINE_HEIGHT) / 2 + 8);
+
   if (d.isSelected) {
     sel
       .append("circle")
-      .attr("r", d.size + 7)
+      .attr("r", r + 7)
       .attr("fill", d.color)
       .attr("opacity", 0.2)
       .attr("class", "glow-ring");
@@ -29,63 +65,35 @@ function drawCircleNode(
 
   sel
     .append("circle")
-    .attr("r", d.size)
+    .attr("r", r)
     .attr("fill", d.color)
     .attr("stroke", "#fff")
     .attr("stroke-width", d.isSelected ? 3 : 2)
     .attr("class", "node-shape");
 
-  const innerW = d.size * 1.4;
-  const fontSize = 9;
-  const lineHeight = 12;
-  // ~5.4px per char at font-size 9
-  const maxChars = Math.floor(innerW / 5.4);
-  const lines = wrapText(d.label, maxChars, 3); // max 3 lines
+  appendWrappedText(sel, lines, CIRCLE_LINE_HEIGHT, CIRCLE_FONT_SIZE, {
+    fill: "rgba(255,255,255,0.95)",
+    fontWeight: "600",
+  });
 
-  if (lines.length) {
-    const totalH = lines.length * lineHeight;
-    const startY = -(totalH / 2) + lineHeight * 0.5;
-
-    const textEl = sel
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle")
-      .attr("fill", "rgba(255,255,255,0.95)")
-      .attr("font-size", fontSize)
-      .attr("font-weight", "600")
-      .attr("pointer-events", "none");
-
-    lines.forEach((line, i) => {
-      textEl
-        .append("tspan")
-        .text(line)
-        .attr("x", 0)
-        .attr("y", startY + i * lineHeight);
-    });
-  }
+  // Write actual radius back so edgeHelpers and forceCollide use the real size
+  d.size = r;
 }
+
 function drawRectNode(
   sel: d3.Selection<SVGGElement, NodeDatum, any, any>,
   d: NodeDatum,
 ) {
-  // ── Layout constants ────────────────────────────────────────────────────
-  const rw = d.width ?? 220; // card width in px
-  const padX = 5; // horizontal inner padding
-  const padY = 10; // vertical inner padding
-  const lineHeight = 15; // px between tspan baselines
-  const fontSize = 11;
-  const maxTextW = rw - padX * 2;
+  const rw = d.width ?? 220;
+  const padX = 5;
+  const padY = 10;
 
-  // ── Word-wrap the full description ──────────────────────────────────────
-  // ~6.2px per character at font-size 11 is a reliable SVG estimate
-  const maxChars = Math.floor(maxTextW / 6.2);
+  const maxChars = Math.floor((rw - padX * 2) / RECT_PX_PER_CHAR);
   const lines = wrapText(d.fullDescription ?? d.description ?? "", maxChars);
 
-  // ── Auto-size rect height to fit content ────────────────────────────────
-  const textBlockH = lines.length * lineHeight;
+  const textBlockH = lines.length * RECT_LINE_HEIGHT;
   const rh = textBlockH + padY * 2;
 
-  // ── Background ─────────────────────────────────────────────────────────
   sel
     .append("rect")
     .attr("width", rw)
@@ -99,40 +107,51 @@ function drawRectNode(
     .attr("stroke-width", d.isSelected ? 3 : 1.5)
     .attr("class", "node-shape");
 
-  // ── Wrapped text ────────────────────────────────────────────────────────
-  if (lines.length) {
-    const textStartY = -(textBlockH / 2) + lineHeight * 0.5;
+  appendWrappedText(sel, lines, RECT_LINE_HEIGHT, RECT_FONT_SIZE, {
+    fill: "#1e293b",
+  });
 
-    const textEl = sel
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle")
-      .attr("fill", "#1e293b")
-      .attr("font-size", fontSize)
-      .attr("pointer-events", "none");
-
-    lines.forEach((line, i) => {
-      textEl
-        .append("tspan")
-        .text(line)
-        .attr("x", 0)
-        .attr("y", textStartY + i * lineHeight);
-    });
-  }
-
-  // Write computed height back to datum so getEdgeEnd() and getLabelDy()
-  // use the real size, not the initial placeholder
+  // Write actual height back so edgeHelpers uses the real size
   d.height = rh;
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// ── Shared helpers ────────────────────────────────────────────────────────────
 
-function wrapText(
-  text: string,
-  maxChars: number,
-  maxLines = Infinity,
-): string[] {
+/** Renders pre-wrapped lines as tspan elements, vertically centred on (0,0). */
+function appendWrappedText(
+  sel: d3.Selection<SVGGElement, NodeDatum, any, any>,
+  lines: string[],
+  lineHeight: number,
+  fontSize: number,
+  style: { fill: string; fontWeight?: string },
+) {
+  if (!lines.length) return;
+
+  const totalH = lines.length * lineHeight;
+  const startY = -(totalH / 2) + lineHeight * 0.5;
+
+  const textEl = sel
+    .append("text")
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .attr("fill", style.fill)
+    .attr("font-size", fontSize)
+    .attr("font-weight", style.fontWeight ?? "400")
+    .attr("pointer-events", "none");
+
+  lines.forEach((line, i) => {
+    textEl
+      .append("tspan")
+      .text(line)
+      .attr("x", 0)
+      .attr("y", startY + i * lineHeight);
+  });
+}
+
+/** Breaks text into lines that fit within maxChars, splitting on word boundaries. */
+function wrapText(text: string, maxChars: number): string[] {
   if (!text) return [];
+
   const words = text.split(" ");
   const lines: string[] = [];
   let current = "";
@@ -143,10 +162,7 @@ function wrapText(
       current = candidate;
     } else {
       if (current) lines.push(current);
-      if (lines.length >= maxLines - 1) {
-        current = word.slice(0, maxChars - 1) + "…";
-        break;
-      }
+      // Hard-break single words that exceed the limit
       current =
         word.length > maxChars ? word.slice(0, maxChars - 1) + "…" : word;
     }
@@ -156,25 +172,10 @@ function wrapText(
   return lines;
 }
 
-export function applyHoverHighlight(
-  sel: d3.Selection<SVGGElement, NodeDatum, any, any>,
-  entering: boolean,
-) {
-  sel.each(function (d) {
-    const shape = d3.select(this).select(".node-shape");
-
-    if (entering) {
-      shape.attr("stroke", "#60A5FA").attr("stroke-width", 3);
-    } else {
-      const defaultStroke =
-        d.shape === "rect" ? (d.isSelected ? d.color : "#1e293b") : "#fff";
-      shape
-        .attr("stroke", defaultStroke)
-        .attr("stroke-width", d.isSelected ? 3 : 2);
-    }
-  });
-}
-
-function typeAbbrev(type: string): string {
-  return type.slice(0, 2).toUpperCase();
+function splitCamelCase(text: string): string {
+  return text
+    .replace(/([A-Z][a-z]+)/g, " $1")
+    .replace(/([A-Z]{2,})(?=[A-Z][a-z]|\d|\s|$)/g, " $1")
+    .replace(/(\d+)/g, " $1")
+    .trim();
 }

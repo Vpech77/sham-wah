@@ -180,18 +180,29 @@
 
     <!-- ── Legend (bottom-left) ──────────────────────────────────────────── -->
     <div
-      class="absolute bottom-4 left-4 z-10 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 px-3 py-2 flex flex-wrap gap-x-4 gap-y-1"
+      class="absolute bottom-4 left-4 z-10 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 px-3 py-2 flex flex-wrap gap-x-4 gap-y-1.5 items-center"
     >
+      <!-- Grouped circle nodes -->
       <div
-        v-for="(color, type) in TYPE_COLORS"
-        :key="type"
+        v-for="item in LEGEND_ITEMS"
+        :key="item.label"
         class="flex items-center gap-1.5"
       >
+        <!-- Rect shape for UserFeedback -->
         <span
-          class="w-2.5 h-2.5 rounded-full flex-shrink-0"
-          :style="{ backgroundColor: color }"
+          v-if="item.shape === 'rect'"
+          class="w-4 h-2.5 rounded-sm flex-shrink-0 border border-gray-400"
+          style="background: #ffffff"
         />
-        <span class="text-xs text-gray-600 dark:text-gray-400">{{ type }}</span>
+        <!-- Circle shape for all others -->
+        <span
+          v-else
+          class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+          :style="{ backgroundColor: item.color }"
+        />
+        <span class="text-xs text-gray-600 dark:text-gray-400">{{
+          item.label
+        }}</span>
       </div>
     </div>
 
@@ -205,6 +216,16 @@ import { ref, computed } from "vue";
 import { useGraphStore } from "~/stores/graph-store";
 import { useGraphRenderer } from "~/composables/useGraphRenderer";
 import { TYPE_COLORS } from "~/utils/graph/graphAdapter";
+
+const LEGEND_ITEMS = [
+  { label: "Data", color: TYPE_COLORS.Dataset, shape: "circle" },
+  {
+    label: "Scientific Paper",
+    color: TYPE_COLORS.ScientificPaper,
+    shape: "circle",
+  },
+  { label: "User Feedback", color: TYPE_COLORS.UserFeedback, shape: "rect" },
+] as const;
 
 // ── Store ──────────────────────────────────────────────────────────────────────
 const graphStore = useGraphStore();

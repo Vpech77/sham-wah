@@ -39,13 +39,6 @@
       >
         {{ node.type }}
       </span>
-      <span
-        v-if="node.isSelected"
-        class="inline-flex items-center gap-1 text-xs font-medium text-blue-500 dark:text-blue-400"
-      >
-        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-blue-400" />
-        Resource Selected
-      </span>
     </div>
 
     <!-- Comment -->

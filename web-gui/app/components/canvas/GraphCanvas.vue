@@ -2,16 +2,16 @@
   <div
     class="relative w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
   >
-    <!-- Controls Overlay -->
+    <!-- ── Toolbar (top-right) ──────────────────────────────────────────── -->
     <div class="absolute top-4 right-4 z-10 flex flex-col gap-2">
-      <!-- Zoom Controls -->
+      <!-- Zoom controls -->
       <div
         class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-1"
       >
         <button
-          @click="zoomIn"
           class="block w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           title="Zoom in"
+          @click="zoomIn"
         >
           <svg
             class="w-5 h-5 text-gray-700 dark:text-gray-300"
@@ -27,11 +27,11 @@
             />
           </svg>
         </button>
-        <div class="h-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
+        <div class="h-px bg-gray-200 dark:bg-gray-700 mx-1" />
         <button
-          @click="zoomOut"
           class="block w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           title="Zoom out"
+          @click="zoomOut"
         >
           <svg
             class="w-5 h-5 text-gray-700 dark:text-gray-300"
@@ -47,11 +47,11 @@
             />
           </svg>
         </button>
-        <div class="h-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
+        <div class="h-px bg-gray-200 dark:bg-gray-700 mx-1" />
         <button
-          @click="resetView"
           class="block w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           title="Reset view"
+          @click="resetView"
         >
           <svg
             class="w-5 h-5 text-gray-700 dark:text-gray-300"
@@ -69,15 +69,15 @@
         </button>
       </div>
 
-      <!-- View Options -->
+      <!-- Label toggle -->
       <div
         class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-1"
       >
         <button
-          @click="toggleLabels"
           class="block w-10 h-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
           :class="{ 'bg-blue-50 dark:bg-blue-900/20': showLabels }"
           title="Toggle labels"
+          @click="toggleLabels"
         >
           <svg
             class="w-5 h-5 text-gray-700 dark:text-gray-300"
@@ -96,127 +96,159 @@
       </div>
     </div>
 
-    <!-- Info Panel -->
-    <div
-      v-if="selectedNode"
-      class="absolute top-4 left-4 z-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 max-w-xs"
+    <!-- ── Info panel (top-left, slides in) ─────────────────────────────── -->
+    <Transition
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="opacity-0 -translate-x-2"
+      enter-to-class="opacity-100 translate-x-0"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100 translate-x-0"
+      leave-to-class="opacity-0 -translate-x-2"
     >
-      <div class="flex items-start justify-between mb-2">
-        <h3 class="font-semibold text-gray-900 dark:text-white">
-          {{ selectedNode.label }}
-        </h3>
-        <button
-          @click="selectedNode = null"
-          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 ml-2"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+      <div v-if="clickedNode" class="absolute top-4 left-4 z-10">
+        <GraphInfoPanel
+          :node="clickedNode"
+          :degree="edgeDegree(clickedNode.id)"
+          @close="clickedNode = null"
+        />
       </div>
-      <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-        <p>
-          <span class="font-medium">Connections:</span>
-          {{ selectedNode.degree }}
+    </Transition>
+
+    <!-- ── Empty state ───────────────────────────────────────────────────── -->
+    <Transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="!graphStore.graphNodes.length && !graphStore.isLoadingNeighbors"
+        class="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none text-gray-300 dark:text-gray-700"
+      >
+        <svg
+          class="w-14 h-14"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.2"
+            d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"
+          />
+        </svg>
+        <p class="text-sm font-medium">
+          Select a digital asset to explore its graph
         </p>
-        <p><span class="font-medium">Type:</span> {{ selectedNode.type }}</p>
+      </div>
+    </Transition>
+
+    <!-- ── Loading overlay ───────────────────────────────────────────────── -->
+    <Transition
+      enter-active-class="transition ease-out duration-150"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="graphStore.isLoadingNeighbors"
+        class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/70 z-20 backdrop-blur-sm"
+      >
+        <div class="flex flex-col items-center gap-3">
+          <div
+            class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"
+          />
+          <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+            Loading neighbors…
+          </p>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- ── Error banner ──────────────────────────────────────────────────── -->
+    <div
+      v-if="graphStore.error"
+      class="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs px-4 py-2 rounded-lg shadow"
+    >
+      {{ graphStore.error }}
+    </div>
+
+    <!-- ── Legend (bottom-left) ──────────────────────────────────────────── -->
+    <div
+      class="absolute bottom-4 left-4 z-10 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 px-3 py-2 flex flex-wrap gap-x-4 gap-y-1.5 items-center"
+    >
+      <!-- Grouped circle nodes -->
+      <div
+        v-for="item in LEGEND_ITEMS"
+        :key="item.label"
+        class="flex items-center gap-1.5"
+      >
+        <!-- Rect shape for UserFeedback -->
+        <span
+          v-if="item.shape === 'rect'"
+          class="w-4 h-2.5 rounded-sm flex-shrink-0 border border-gray-400"
+          style="background: #ffffff"
+        />
+        <!-- Circle shape for all others -->
+        <span
+          v-else
+          class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+          :style="{ backgroundColor: item.color }"
+        />
+        <span class="text-xs text-gray-600 dark:text-gray-400">{{
+          item.label
+        }}</span>
       </div>
     </div>
 
-    <!-- Graph Container -->
-    <div ref="graphContainer" class="w-full h-full"></div>
+    <!-- ── D3 mount point ────────────────────────────────────────────────── -->
+    <div ref="graphContainer" class="w-full h-full" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed } from "vue";
+import { useGraphStore } from "~/stores/graph-store";
+import { useGraphRenderer } from "~/composables/useGraphRenderer";
+import { TYPE_COLORS } from "~/utils/graph/graphAdapter";
 
+const LEGEND_ITEMS = [
+  { label: "Data", color: TYPE_COLORS.Dataset, shape: "circle" },
+  {
+    label: "Scientific Paper",
+    color: TYPE_COLORS.ScientificPaper,
+    shape: "circle",
+  },
+  { label: "User Feedback", color: TYPE_COLORS.UserFeedback, shape: "rect" },
+] as const;
+
+// ── Store ──────────────────────────────────────────────────────────────────────
+const graphStore = useGraphStore();
+
+// ── D3 mount target ───────────────────────────────────────────────────────────
 const graphContainer = ref<HTMLDivElement | null>(null);
-const showLabels = ref(true);
-const selectedNode = ref<any>(null);
 
-let sigma: any = null;
-let graph: any = null;
+// ── Renderer composable ───────────────────────────────────────────────────────
+const { showLabels, clickedNode, zoomIn, zoomOut, resetView, toggleLabels } =
+  useGraphRenderer(
+    graphContainer,
+    computed(() => graphStore.graphNodes),
+    computed(() => graphStore.graphEdges),
+  );
 
-onMounted(async () => {
-  const Sigma = (await import("sigma")).default;
-  const Graph = (await import("graphology")).default;
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
-  graph = new Graph();
-
-  // Add sample nodes
-  graph.addNode("n1", {
-    x: 0,
-    y: 0,
-    size: 10,
-    label: "Node 1",
-    color: "#3B82F6",
-  });
-  graph.addNode("n2", {
-    x: 1,
-    y: 1,
-    size: 10,
-    label: "Node 2",
-    color: "#8B5CF6",
-  });
-  graph.addEdge("n1", "n2");
-
-  sigma = new Sigma(graph, graphContainer.value!, {
-    renderLabels: showLabels.value,
-  });
-
-  sigma.on("clickNode", ({ node }: { node: string }) => {
-    const nodeData = graph.getNodeAttributes(node);
-    selectedNode.value = {
-      label: nodeData.label,
-      degree: graph.degree(node),
-      type: nodeData.type || "Default",
-    };
-  });
-});
-
-onBeforeUnmount(() => {
-  if (sigma) {
-    sigma.kill();
-  }
-});
-
-const zoomIn = () => {
-  if (sigma) {
-    const camera = sigma.getCamera();
-    camera.animatedZoom({ duration: 300 });
-  }
-};
-
-const zoomOut = () => {
-  if (sigma) {
-    const camera = sigma.getCamera();
-    camera.animatedUnzoom({ duration: 300 });
-  }
-};
-
-const resetView = () => {
-  if (sigma) {
-    const camera = sigma.getCamera();
-    camera.animatedReset({ duration: 500 });
-  }
-};
-
-const toggleLabels = () => {
-  showLabels.value = !showLabels.value;
-  if (sigma) {
-    sigma.setSetting("renderLabels", showLabels.value);
-    sigma.refresh();
-  }
-};
+/** Count edges touching a given node (works before and after d3 resolves string ids) */
+function edgeDegree(nodeId: string): number {
+  return graphStore.graphEdges.filter((l) => {
+    const src = typeof l.source === "string" ? l.source : l.source.id;
+    const tgt = typeof l.target === "string" ? l.target : l.target.id;
+    return src === nodeId || tgt === nodeId;
+  }).length;
+}
 </script>

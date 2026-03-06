@@ -17,6 +17,8 @@ export interface ConceptCategory {
 export interface QueryFilters {
   limit: number;
   assetType: string;
+  dateStart: string | null;
+  dateEnd: string | null;
 }
 
 // ─── Static data ──────────────────────────────────────────────────────
@@ -27,35 +29,31 @@ export const CONCEPT_CATEGORIES: ConceptCategory[] = [
     label: "Human Activity",
     concepts: [
       { value: "Hiking", label: "Hiking" },
-      { value: "Camping", label: "Camping" },
-      { value: "Climbing", label: "Climbing" },
-      { value: "Skiing", label: "Skiing" },
-      { value: "MountainBiking", label: "Mountain Biking" },
-      { value: "Trekking", label: "Trekking" },
+      { value: "FastHiking", label: "FastHiking" },
+      { value: "Cycling", label: "Cycling" },
     ],
   },
   {
     name: "animalActivity",
     label: "Animal Activity",
-    concepts: [
-      { value: "Hiking", label: "Hiking" },
-      { value: "Skiing", label: "Skiing" },
-      { value: "Cycling", label: "Cycling" },
-      { value: "TrailRunning", label: "Trail Running" },
-    ],
+    concepts: [],
   },
   {
     name: "land",
     label: "Land Entities",
     concepts: [
       { value: "SensitiveArea", label: "Sensitive Area" },
-      { value: "WaterArea", label: "Water Area" },
-      { value: "RestArea", label: "Rest Area" },
-      { value: "MotorhomeArea", label: "Motorhome Area" },
+      { value: "AireProtegee", label: "Aire protégée" },
+      { value: "AireDetente", label: "Aire de détente" },
+      { value: "AireCampingCar", label: "Aire Camping Car" },
       { value: "Landmark", label: "Landmark" },
-      { value: "Trail", label: "Trail" },
-      { value: "NatureReserves", label: "Nature Reserves" },
-      { value: "Footprint", label: "Footprint" },
+      { value: "EncounteringZone", label: "Encountering Zone" },
+      { value: "ReservesNaturelles", label: "Reserves naturelles" },
+      { value: "PlandEau", label: "Plan d'eau" },
+      { value: "PopulationFootprint", label: "Population Footprint" },
+      { value: "Sentier", label: "Sentier" },
+      { value: "Trajectory", label: "Trajectory" },
+      { value: "Route", label: "Route" },
     ],
   },
 ];
@@ -75,7 +73,12 @@ export const usePredefinedQueryStore = defineStore("predefinedQuery", () => {
   // State
   const selectedCategoryName = ref<string>("");
   const selectedConceptValues = ref<string[]>([]);
-  const filters = ref<QueryFilters>({ limit: 15, assetType: "all" });
+  const filters = ref<QueryFilters>({
+    limit: 15,
+    assetType: "all",
+    dateStart: null,
+    dateEnd: null,
+  });
 
   // Getters
   const selectedCategory = computed(
@@ -132,7 +135,12 @@ export const usePredefinedQueryStore = defineStore("predefinedQuery", () => {
   function reset() {
     selectedCategoryName.value = "";
     selectedConceptValues.value = [];
-    filters.value = { limit: 15, assetType: "all" };
+    filters.value = {
+      limit: 15,
+      assetType: "all",
+      dateStart: null,
+      dateEnd: null,
+    };
   }
 
   return {

@@ -1,10 +1,9 @@
 <template>
   <div class="relative">
     <select
-      :value="store.selectedCategoryName"
+      v-model="selectedCategory"
       :disabled="disabled"
       class="w-full h-full px-4 py-2.5 pr-10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none"
-      @change="store.setCategory(($event.target as HTMLSelectElement).value)"
     >
       <option value="">Select a concept category...</option>
       <option
@@ -34,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import {
   usePredefinedQueryStore,
   CONCEPT_CATEGORIES,
@@ -42,4 +42,9 @@ import {
 defineProps<{ disabled?: boolean }>();
 
 const store = usePredefinedQueryStore();
+
+const selectedCategory = computed({
+  get: () => store.selectedCategoryName,
+  set: (value: string) => store.setCategory(value),
+});
 </script>

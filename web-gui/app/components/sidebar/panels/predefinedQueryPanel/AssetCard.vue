@@ -31,7 +31,7 @@
 
     <!-- Line 2: Description (full, wraps naturally) -->
     <p
-      v-if="asset.description"
+      v-if="asset.comment"
       class="text-[11px] mt-1 leading-relaxed"
       :class="
         selected
@@ -39,7 +39,7 @@
           : 'text-gray-500 dark:text-gray-400'
       "
     >
-      {{ asset.description }}
+      {{ asset.comment }}
     </p>
   </button>
 </template>

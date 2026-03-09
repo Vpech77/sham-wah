@@ -188,20 +188,4 @@ export const MOCK_NEIGHBOR_GRAPHS: Record<string, MockNeighborGraph> = {
       },
     ],
   },
-
-  "paper-marchand-2025": {
-    nodeIds: ["ov-tracks-2024", "skilift-counters"],
-    edges: [
-      {
-        source: "paper-marchand-2025",
-        target: "ov-tracks-2024",
-        label: "USES",
-      },
-      {
-        source: "paper-marchand-2025",
-        target: "skilift-counters",
-        label: "USES",
-      },
-    ],
-  },
 };

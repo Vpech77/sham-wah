@@ -32,7 +32,7 @@ export function getEdgeEnd(d: LinkDatum): { x: number; y: number } {
 
 /** Vertical offset for the external floating label below each node */
 export function getLabelDy(d: NodeDatum): number {
-  return d.shape === "rect" ? (d.height ?? 56) / 2 + 14 : d.size + 14;
+  return d.shape === "rect" ? -((d.height ?? 56) / 2 + 8) : d.size + 14;
 }
 
 /** Collision radius used by forceCollide */

@@ -49,7 +49,8 @@ function drawCircleNode(
 ) {
   // Wrap the full untruncated name to fit the circle's inner chord (~70% of diameter)
   const maxChars = Math.floor((d.size * 1.4) / CIRCLE_PX_PER_CHAR);
-  const lines = wrapText(splitCamelCase(d.label), maxChars);
+  const MAX_LABEL_LINES = 3;
+  const lines = wrapText(splitCamelCase(d.label), maxChars, MAX_LABEL_LINES);
 
   // Grow radius if the wrapped text is taller than the base size
   const r = Math.max(d.size, (lines.length * CIRCLE_LINE_HEIGHT) / 2 + 8);
@@ -148,8 +149,11 @@ function appendWrappedText(
   });
 }
 
-/** Breaks text into lines that fit within maxChars, splitting on word boundaries. */
-function wrapText(text: string, maxChars: number): string[] {
+function wrapText(
+  text: string,
+  maxChars: number,
+  maxLines = Infinity,
+): string[] {
   if (!text) return [];
 
   const words = text.split(" ");
@@ -162,9 +166,21 @@ function wrapText(text: string, maxChars: number): string[] {
       current = candidate;
     } else {
       if (current) lines.push(current);
-      // Hard-break single words that exceed the limit
       current =
         word.length > maxChars ? word.slice(0, maxChars - 1) + "…" : word;
+    }
+    // If we've hit the limit, truncate and stop
+    if (lines.length === maxLines - 1 && current) {
+      const remaining = words.slice(words.indexOf(word) + 1);
+      if (remaining.length > 0) {
+        current =
+          current.length >= maxChars
+            ? current.slice(0, maxChars - 1) + "…"
+            : (current + " " + remaining.join(" ")).slice(0, maxChars - 1) +
+              "…";
+      }
+      lines.push(current);
+      return lines;
     }
   }
 

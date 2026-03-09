@@ -82,15 +82,6 @@ export function useGraphRenderer(
 
     svgEl.call(zoomBehavior); // allow zoom scroll with mouse wheel
 
-    const initialScale = 1.3;
-
-    const initialTransform = d3.zoomIdentity
-      .translate(width / 2, height / 2)
-      .scale(initialScale)
-      .translate(-width / 2, -height / 2);
-
-    svgEl.call(zoomBehavior.transform, initialTransform);
-
     // ── Arrowhead marker
     svgEl
       .append("defs")

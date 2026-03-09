@@ -110,12 +110,13 @@ export function useGraphRenderer(
     const link = g
       .append("g")
       .attr("class", "links")
-      .selectAll<SVGLineElement, LinkDatum>("line")
+      .selectAll<SVGLineElement, LinkDatum>("path")
       .data(links)
-      .join("line")
+      .join("path")
       .attr("stroke", "#CBD5E1")
       .attr("stroke-width", 1.5)
       .attr("stroke-opacity", 0.7)
+      .attr("fill", "none")
       .attr("marker-end", "url(#arrowhead)");
 
     const linkLabel = g
@@ -214,7 +215,7 @@ export function useGraphRenderer(
             return target.shape === "rect" ? 380 : 280;
           }),
       )
-      .force("charge", d3.forceManyBody().strength(-500))
+      .force("charge", d3.forceManyBody().strength(-800))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force(
         "collision",
@@ -222,27 +223,44 @@ export function useGraphRenderer(
       )
 
       .on("tick", () => {
-        link
-          .attr("x1", (d) => (d.source as NodeDatum).x ?? 0)
-          .attr("y1", (d) => (d.source as NodeDatum).y ?? 0)
-          .attr("x2", (d) => getEdgeEnd(d).x)
-          .attr("y2", (d) => getEdgeEnd(d).y);
+        link.attr("d", (d) => {
+          const sx = (d.source as NodeDatum).x ?? 0;
+          const sy = (d.source as NodeDatum).y ?? 0;
+          const { x: ex, y: ey } = getEdgeEnd(d);
+          // Midpoint + perpendicular offset for the control point
+          const mx = (sx + ex) / 2;
+          const my = (sy + ey) / 2;
+          const dx = ex - sx;
+          const dy = ey - sy;
+          const len = Math.sqrt(dx * dx + dy * dy) || 1;
+          const curvature = 40; // px — increase for more arc
+          const cx = mx - (dy / len) * curvature;
+          const cy = my + (dx / len) * curvature;
+          return `M ${sx},${sy} Q ${cx},${cy} ${ex},${ey}`;
+        });
 
         linkLabel
-          .attr(
-            "x",
-            (d) =>
-              (((d.source as NodeDatum).x ?? 0) +
-                ((d.target as NodeDatum).x ?? 0)) /
-              2,
-          )
-          .attr(
-            "y",
-            (d) =>
-              (((d.source as NodeDatum).y ?? 0) +
-                ((d.target as NodeDatum).y ?? 0)) /
-              2,
-          );
+          .attr("x", (d) => {
+            const sx = (d.source as NodeDatum).x ?? 0;
+            const ex = (d.target as NodeDatum).x ?? 0;
+            const dx = ex - sx;
+            const sy = (d.source as NodeDatum).y ?? 0;
+            const ey = (d.target as NodeDatum).y ?? 0;
+            const dy = ey - sy;
+            const len = Math.sqrt(dx * dx + dy * dy) || 1;
+            return (sx + ex) / 2 - (dy / len) * 40 * 0.5; // offset toward control point
+          })
+          .attr("y", (d) => {
+            const sx = (d.source as NodeDatum).x ?? 0;
+            const ex = (d.target as NodeDatum).x ?? 0;
+            const sy = (d.source as NodeDatum).y ?? 0;
+            const ey = (d.target as NodeDatum).y ?? 0;
+            const dx = ex - sx;
+            const dy = ey - sy;
+            const len = Math.sqrt(dx * dx + dy * dy) || 1;
+            return (sy + ey) / 2 + (dx / len) * 40 * 0.5;
+          });
+
         nodeGroup.attr(
           "transform",
           (d) => `translate(${d.x ?? 0},${d.y ?? 0})`,

@@ -1,15 +1,15 @@
 version: "3.9"
 
 services:
-  web-gui:
+  gui:
     build:
-      context: ./web-gui
+      context: ./gui
       dockerfile: Dockerfile.dev
     container_name: nuxt_dev
     ports:
       - "3000:3000"
     volumes:
-      - ./web-gui:/app
+      - ./gui:/app
       - /app/node_modules
     environment:
       NUXT_HOST: 0.0.0.0

@@ -7,19 +7,45 @@ from app.config import settings
 
 router = APIRouter(prefix="/assets", tags=["assets"])
 
+ASSET_TYPE_MAP = {
+    "Dataset":        "ns1__Dataset",
+    "DataService":    "ns1__DataService",
+    "ScientificPaper":"ns6__ScientificPaper",
+    "Process":        "ns6__Process",
+    "DatasetSeries":  "ns1__DatasetSeries",
+}
+
+CONCEPT_LABEL_MAP = {
+    "Hiking":             "ns2__Hiking",
+    "HumanActivity":      "ns2__HumanActivity",
+    "PopulationFootprint":"ns2__PopulationFootprint",
+    "Sentier":            "ns2__Sentier",
+    "ReservesNaturelles": "ns2__ReservesNaturelles",
+}
+
 
 def _row_to_asset(row: dict) -> DigitalAsset:
-    """Map a Neo4j record to DigitalAsset."""
-    node = row["a"]
+    node = row["n"]
     props = dict(node)
+
+    raw_label = props.get("rdfs__label", ["Unnamed"])
+    raw_comment = props.get("rdfs__comment", [""])
+
+    ignored_labels = {"Resource", "owl__NamedIndividual"}
+    node_labels = row.get("nodeLabels", [])
+    actual_type = next(
+        (l for l in node_labels if l not in ignored_labels),
+        "Resource"
+    )
+
     return DigitalAsset(
-        id=props.get("uri", props.get("id", "")),
-        type=row.get("type", list(node.labels)[0] if node.labels else "Unknown"),
-        name=props.get("name", props.get("rdfs__label", "Unnamed")),
-        comment=props.get("comment", props.get("rdfs__comment", "")),
-        publisher=props.get("publisher"),
-        location=props.get("location"),
-        concepts=row.get("concepts", []),
+        id=props.get("uri", ""),
+        type=actual_type,
+        name=raw_label[0] if isinstance(raw_label, list) else raw_label,
+        comment=raw_comment[0] if isinstance(raw_comment, list) else raw_comment,
+        publisher=props.get("ns1__publisher") or props.get("ns4__publisher"),
+        location=props.get("ns4__location"),
+        concepts=[],
     )
 
 @router.post("/query", response_model=QueryResult)
@@ -28,12 +54,22 @@ async def query_assets(
     driver: AsyncDriver = Depends(get_driver),
 ):
     start = time.monotonic()
-
     cypher, query_params = _build_cypher(params)
 
     async with driver.session(database=settings.neo4j_database) as session:
         result = await session.run(cypher, query_params)
         records = await result.data()
+
+
+    print("-------cypher-----------")
+    print(cypher)
+    print()
+    
+    
+    for r in records:
+                
+        print("-------RECORD-----------")
+        print(r)
 
     assets = [_row_to_asset(r) for r in records]
     elapsed_ms = int((time.monotonic() - start) * 1000)
@@ -42,33 +78,33 @@ async def query_assets(
 
 
 def _build_cypher(params: QueryParams) -> tuple[str, dict]:
-    """
-    Build a parameterised Cypher query.
-    """
-    conditions: list[str] = []
     p: dict = {"limit": params.limit}
 
-    # Filter by concept
-    if params.concepts:
-        conditions.append(
-            "ANY(c IN $concepts WHERE c IN a.concepts)"
-        )
-        p["concepts"] = params.concepts
+    activity_labels = [
+        CONCEPT_LABEL_MAP[c]
+        for c in params.concepts
+        if c in CONCEPT_LABEL_MAP
+    ]
+    asset_type_label = ASSET_TYPE_MAP.get(params.assetType, None)
 
-    # Filter by asset type
-    type_clause = ""
-    if params.assetType != "all":
-        type_clause = f":{params.assetType}"
+    if activity_labels:
+        activity_union = "|".join(activity_labels)
+        asset_filter = f"AND n:{asset_type_label}" if asset_type_label else ""
 
-    where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+        cypher = f"""
+            MATCH (n:Resource)-[:ns6__represents]-(m:{activity_union})
+            {asset_filter}
+            RETURN DISTINCT n, labels(n) AS nodeLabels
+            LIMIT $limit
+        """
+    else:
+        asset_filter = f"AND n:{asset_type_label}" if asset_type_label else ""
 
-    cypher = f"""
-        MATCH (a{type_clause})
-        {where_clause}
-        OPTIONAL MATCH (a)-[:RELATED_TO]->(concept)
-        WITH a, collect(DISTINCT concept.name) AS concepts,
-             labels(a)[0] AS type
-        RETURN a, type, concepts
-        LIMIT $limit
-    """
+        cypher = f"""
+            MATCH (n:Resource)-[:ns6__represents]-(m:ns2__HumanActivity)
+            {asset_filter}
+            RETURN DISTINCT n, labels(n) AS nodeLabels
+            LIMIT $limit
+        """
+
     return cypher, p

@@ -13,3 +13,8 @@ async def get_labels(driver: AsyncDriver = Depends(get_driver)):
         result = await session.run("CALL db.labels()")
         records = await result.data()
     return {"labels": [r["label"] for r in records]}
+
+
+
+
+

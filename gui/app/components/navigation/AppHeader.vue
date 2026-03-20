@@ -17,7 +17,7 @@
     </div>
 
     <!-- CENTER: NAVIGATION -->
-    <!-- <nav class="hidden md:flex items-center gap-4">
+    <nav class="hidden md:flex items-center gap-4">
       <NuxtLink
         v-for="item in navItems"
         :key="item.view"
@@ -27,7 +27,7 @@
       >
         {{ item.label }}
       </NuxtLink>
-    </nav> -->
+    </nav>
 
     <!-- RIGHT: ACTIONS -->
     <div class="flex items-center gap-6">
@@ -65,9 +65,10 @@ const navItems: Array<{
   path: string;
   view: ViewName;
 }> = [
-  { label: "Explore Graph", path: "/explore", view: "explore" },
-  // { label: "Map", path: "/map", view: "map" },
-  { label: "Edit Graph", path: "/edit", view: "edit" },
+  { label: "Explore Data", path: "/explore", view: "explore" },
+  { label: "Map", path: "/map", view: "map" },
+  { label: "UserFeedback", path: "/edit", view: "edit" },
+  // { label: "Edit Graph", path: "/edit", view: "edit" },
 ];
 
 /**

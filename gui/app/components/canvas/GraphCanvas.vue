@@ -141,7 +141,7 @@
           />
         </svg>
         <p class="text-sm font-medium">
-          Select a digital asset to explore its graph
+          Select a result to explore its neighbors up to depth 2
         </p>
       </div>
     </Transition>

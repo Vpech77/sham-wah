@@ -48,6 +48,21 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
     }
   }
 
+  async function executeQueryMockData(params: QueryParams) {
+    isExecuting.value = true;
+    error.value = null;
+    results.value = null;
+    queryHistory.value = [params, ...queryHistory.value].slice(0, 10);
+    try {
+      results.value = await fetchFromNeo4jMockData(params);
+    } catch (err) {
+      error.value =
+        err instanceof Error ? err.message : "An unexpected error occurred";
+    } finally {
+      isExecuting.value = false;
+    }
+  }
+
   function fetchFromNeo4jMockData(params: QueryParams): Promise<QueryResult> {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -105,6 +120,7 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
     error,
     queryHistory,
     executeQuery,
+    executeQueryMockData,
     clearResults,
     clearHistory,
     getLastQuery,

@@ -108,6 +108,7 @@ import { useUiStore, type DisplayMode } from "~/stores/ui";
 import CypherPanel from "./panels/CypherPanel.vue";
 import ChatbotPanel from "./panels/ChatbotPanel.vue";
 import HumanActivityPanel from "./panels/PredefinedQueryPanel.vue";
+import MockDataPanel from "./panels/MockDataPanel.vue";
 
 const ui = useUiStore();
 
@@ -122,6 +123,11 @@ const panelMap = {
     title: "Predefined Query",
     icon: "P",
     component: HumanActivityPanel,
+  },
+  mock: {
+    title: "Mock Data",
+    icon: "M",
+    component: MockDataPanel,
   },
   cypher: {
     title: "Graph Query",

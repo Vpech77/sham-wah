@@ -121,7 +121,7 @@ export const usePredefinedQueryStore = defineStore("predefinedQuery", () => {
   }
 
   function reset() {
-    selectedCategoryName.value = "";
+    // selectedCategoryName.value = "";
     selectedConceptValues.value = [];
     filters.value = { ...DEFAULT_FILTERS };
   }

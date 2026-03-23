@@ -24,8 +24,11 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    NEO4J_API_URL: process.env.NUXT_NEO4J_API_URL || "http://localhost:8000",
     public: {
       MAPTILER_KEY: process.env.NUXT_PUBLIC_MAPTILER_KEY,
+      NEO4J_API_URL:
+        process.env.NUXT_PUBLIC_NEO4J_API_URL || "http://localhost:8000",
     },
   },
 

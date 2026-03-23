@@ -29,6 +29,7 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
   const results = ref<QueryResult | null>(null);
   const error = ref<string | null>(null);
   const queryHistory = ref<QueryParams[]>([]);
+  const config = useRuntimeConfig();
 
   async function executeQuery(params: QueryParams) {
     isExecuting.value = true;
@@ -66,15 +67,18 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
   }
 
   async function fetchFromNeo4j(params: QueryParams): Promise<QueryResult> {
-    const response = await fetch("http://localhost:8000/assets/query", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        concepts: params.concepts,
-        assetType: params.assetType,
-        limit: params.limit,
-      }),
-    });
+    const response = await fetch(
+      `${config.public.NEO4J_API_URL}/assets/query`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          concepts: params.concepts,
+          assetType: params.assetType,
+          limit: params.limit,
+        }),
+      },
+    );
 
     if (!response.ok) {
       const error = await response.json();

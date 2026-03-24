@@ -125,8 +125,8 @@ const panelMap = {
     component: HumanActivityPanel,
   },
   mock: {
-    title: "Mock Data",
-    icon: "M",
+    title: "Predefined Query - Hard coded data",
+    icon: "H",
     component: MockDataPanel,
   },
   cypher: {

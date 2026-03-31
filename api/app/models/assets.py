@@ -7,7 +7,7 @@ class DigitalAsset(BaseModel):
     type: str
     name: str
     comment: str
-    publisher: str | None = None
+    publisher: list[str] | None = None
     location: list[str] | None = None
 
 class QueryResult(BaseModel):

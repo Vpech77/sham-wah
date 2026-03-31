@@ -44,7 +44,7 @@ def _row_to_asset(row: dict) -> DigitalAsset:
         type=actual_type,
         name=raw_label[0] if isinstance(raw_label, list) else raw_label,
         comment=raw_comment[0] if isinstance(raw_comment, list) else raw_comment,
-        publisher=props.get("ns1__publisher") or props.get("ns4__publisher"),
+        publisher=props.get("ns4__publisher"),
         location=props.get("ns4__location"),
     )
 
@@ -69,28 +69,24 @@ async def query_assets(
 
     return QueryResult(count=len(assets), executionTime=elapsed_ms, data=assets)
 
+def _build_cypher(params: QueryParams):
+    p = {"limit": params.limit}
 
-def _build_cypher(params: QueryParams) -> tuple[str, dict]:
-    p: dict = {"limit": params.limit}
+    unknown = [c for c in params.concepts if c not in CONCEPT_LABEL_MAP]
+    if unknown:
+        raise ValueError(f"Unknown concepts: {unknown}")
 
-    activity_labels = [
-        CONCEPT_LABEL_MAP[c]
-        for c in params.concepts
-        if c in CONCEPT_LABEL_MAP
-    ]
+    asset_label = ASSET_TYPE_MAP.get(params.assetType, "Resource")
+    activity_labels = [CONCEPT_LABEL_MAP[c] for c in params.concepts]
 
-    try:
-        activity_labels = [CONCEPT_LABEL_MAP[c] for c in params.concepts]
-    except KeyError:
-        raise ValueError(f"Unknown concepts: {params.concepts}")
-
-    asset_type_label = ASSET_TYPE_MAP.get(params.assetType, "Resource")
-    activity_label_clause = "|".join(activity_labels)
-
+    match_clause = f"(n:{asset_label})"
+    if activity_labels:
+        match_clause += f"-[:ns6__represents]-(m:{'|'.join(activity_labels)})"
 
     cypher = f"""
-        MATCH (n:{asset_type_label})-[:ns6__represents]-(m:{activity_label_clause})
+        MATCH {match_clause}
         RETURN DISTINCT n, labels(n) AS nodeLabels
         LIMIT $limit
     """
+
     return cypher, p

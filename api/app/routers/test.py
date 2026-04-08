@@ -50,7 +50,7 @@ async def sample_node(driver: AsyncDriver = Depends(get_driver)):
     return dict(record["n"]) if record else {}
 
 
-@router.get("/all", include_in_schema=False)
+@router.get("/all")
 async def all_nodes(driver: AsyncDriver = Depends(get_driver)):
     async with driver.session(database=settings.neo4j_database) as session:
         result = await session.run(

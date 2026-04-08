@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from neo4j import AsyncDriver
 from app.dependencies import get_driver
-from app.models.assets import NeighborGraph, DigitalAsset, RawEdge
+from app.schemas.assets import NeighborGraph, DigitalAsset, RawEdge
 from app.config import settings
 
 router = APIRouter(prefix="/graph", tags=["graph"])

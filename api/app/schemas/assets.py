@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Any
 
 # query-result-store.ts
 class DigitalAsset(BaseModel):

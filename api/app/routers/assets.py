@@ -2,7 +2,7 @@ import time
 from fastapi import APIRouter, Depends, HTTPException
 from neo4j import AsyncDriver
 from app.dependencies import get_driver
-from app.models.assets import QueryParams, QueryResult, DigitalAsset
+from app.schemas.assets import QueryParams, QueryResult, DigitalAsset
 from app.config import settings
 
 router = APIRouter(prefix="/assets", tags=["assets"])

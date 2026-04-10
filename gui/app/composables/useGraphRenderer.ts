@@ -191,7 +191,7 @@ export function useGraphRenderer(
           }),
       )
       // force de répulsion entre les nodes
-      .force("charge", d3.forceManyBody().strength(-5000))
+      .force("charge", d3.forceManyBody().strength(-900))
       //force pour centrer le graphe dans le svg
       .force("center", d3.forceCenter(width / 2, height / 2))
       //force pour éviter que les nodes ne se chevauchent quand on deplace un noeud sur un noeud

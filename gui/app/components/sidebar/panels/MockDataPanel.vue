@@ -113,7 +113,7 @@
       </div>
     </div>
 
-    <!-- Filters accordion -->
+    <!-- Filters accordion
     <AppAccordion :default-open="false">
       <template #icon>
         <svg
@@ -136,7 +136,7 @@
         @search="executeQuery"
         @reset="resetAll"
       />
-    </AppAccordion>
+    </AppAccordion> -->
 
     <!-- Max results — outside filters, controls result count -->
     <div class="flex items-center gap-2">
@@ -165,7 +165,7 @@
 
     <!-- Results section -->
     <section v-if="queryStore.results || queryStore.error">
-      <div class="flex items-center justify-between mb-3">
+      <!-- <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
           Results
           <span
@@ -195,7 +195,7 @@
           </svg>
           Clear
         </button>
-      </div>
+      </div> -->
       <!-- Error state -->
       <div
         v-if="queryStore.error"
@@ -228,13 +228,11 @@
 
       <!-- Success state -->
       <div v-else-if="queryStore.results" class="space-y-3">
-        <p class="text-xs text-gray-500 dark:text-gray-400">
+        <!-- <p class="text-xs text-gray-500 dark:text-gray-400">
           {{ queryStore.results.executionTime }}ms
-        </p>
+        </p> -->
         <!-- Scrollable list capped before scrolling -->
-        <div
-          class="flex flex-col gap-1.5 max-h-[600px] overflow-y-auto pr-1 scrollbar-thin"
-        >
+        <div class="flex flex-col gap-0.5 max-h-[600px] pr-1 scrollbar-thin">
           <AssetCard
             v-for="asset in queryStore.results.data"
             :key="asset.id"

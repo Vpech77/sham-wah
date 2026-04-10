@@ -16,9 +16,9 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <ClientOnly>
+        <!-- <ClientOnly>
           <Neo4jStatusBadge v-if="ui.activeSidebarTab !== 'mock'" />
-        </ClientOnly>
+        </ClientOnly> -->
         <button
           class="p-2 rounded-lg text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
           @click="ui.toggleSidebar()"
@@ -128,7 +128,7 @@ const panelMap = {
   human: {
     title: "Predefined Query",
     icon: "P",
-    component: HumanActivityPanel,
+    component: MockDataPanel,
   },
   mock: {
     title: "Predefined Query - Hard coded data",

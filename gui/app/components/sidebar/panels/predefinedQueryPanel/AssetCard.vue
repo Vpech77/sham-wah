@@ -29,10 +29,10 @@
       </span>
     </div>
 
-    <!-- Line 2: Description (full, wraps naturally) -->
+    <!-- Line 2: Description -->
     <p
       v-if="asset.comment"
-      class="text-[11px] mt-1 leading-relaxed"
+      class="text-[11px] mt-1 leading-relaxed truncate-2-lines"
       :class="
         selected
           ? 'text-gold-700 dark:text-gold-300'
@@ -84,3 +84,12 @@ const shortType = computed(
   () => shortTypeMap[props.asset.type] ?? props.asset.type,
 );
 </script>
+
+<style scoped>
+.truncate-2-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>

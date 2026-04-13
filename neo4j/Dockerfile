@@ -1,4 +1,4 @@
-FROM neo4j:5.20-community
+FROM neo4j:5.26-community-ubi9
 
 COPY plugins/ /var/lib/neo4j/plugins/
 COPY import/  /var/lib/neo4j/import/

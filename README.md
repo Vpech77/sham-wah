@@ -80,9 +80,11 @@ You can run Sham‑Wah in two ways:
 docker compose up -d
 ```
 
+#### Common issue on Windows
+
 <div style="border-left: 4px solid #d9534f; padding: 0.8em;">
 <strong>⚠️ WARNING</strong><br>
-On Windows, Neo4j container may fail to start if files use CRLF line endings. Configure your editor to use LF to avoid this issue.
+Neo4j container may fail to start if files use CRLF line endings. Configure your editor to use LF to avoid this issue.
 </div>
 
 <figure style="text-align: left; margin-top: 20px;">
@@ -92,9 +94,16 @@ On Windows, Neo4j container may fail to start if files use CRLF line endings. Co
   </figcaption>
 </figure>
 
+- Then, re‑run the entire Docker Compose setup with:
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+```
+
 ### 🪐 Services available 🪐
 
-- GUI: http://localhost:3000/sham-wah/
+- GUI: http://localhost:3000/sham-wah/explore
 - API Documentation (Swagger): http://localhost:8000/docs
 
 <h2 id="features">🐥 Features 🐥</h2>

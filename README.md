@@ -5,8 +5,18 @@
 ![Neo4J](https://img.shields.io/badge/Neo4j-008CC1?style=for-the-badge&logo=neo4j&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
+## About
+
 Sham‑Wah is a web application currently being developed for the [IntForOut Project](https://www.umr-lastig.fr/intforout/).
 It provides an intuitive interface for sharing and browsing the wide range of resources (scientific papers, datasets, scripts, services, etc...) produced and used by the project’s research teams thanks to an architecture based on a knowledge graph called [OutdoorPressure](https://github.com/intforout/outdoorpressure).
+
+## Why the Name “Sham‑Wah”?
+
+I wanted a short, pleasant‑sounding name for a Knowledge Graph Query Framework, ideally with a nod to knowledge graph, querying and alpine ecology. Since the project focuses on wildlife disturbance in mountain environments, I explored animal‑themed names and naturally thought of the [chamois](https://en.wikipedia.org/wiki/Chamois), an animal I love.
+
+While searching for inspiration, I found an English [forum](https://www.facebook.com/groups/waywordradio/posts/10158351484663584/) discussing how to pronounce chamois. Someone wrote it as “sham‑wah”, and it immediately clicked: unique spelling, easy to pronounce, and a subtle reference to the real animal. During my research I discovered that chamois is also an [HTML color](https://encycolorpedia.fr/d0c07a) name, which inspired the color theme used in the app.
+
+And that’s how Sham‑Wah was born.
 
 ## 📖 Table of contents 📖
 

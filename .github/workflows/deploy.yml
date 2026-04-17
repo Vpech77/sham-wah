@@ -5,6 +5,7 @@ on:
     branches:
       - demo
 
+
 permissions:
   contents: read
   pages: write

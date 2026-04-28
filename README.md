@@ -107,7 +107,7 @@ docker compose up -d
 
 ### 🪐 Services available 🪐
 
-- GUI: http://localhost:3000/sham-wah/
+- GUI: http://localhost:3000/sham-wah/explore
 - API Documentation (Swagger): http://localhost:8000/docs
 
 <h2 id="features">🐥 Features 🐥</h2>

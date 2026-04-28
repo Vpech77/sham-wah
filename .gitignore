@@ -3,8 +3,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 .venv/
-venv/
-*.env
+.venv
 *.egg-info/
 dist/
 build/
@@ -14,6 +13,7 @@ build/
 
 # Environnemnt variables files
 .env
+*.env
 .env.local
 .env.*.local
 

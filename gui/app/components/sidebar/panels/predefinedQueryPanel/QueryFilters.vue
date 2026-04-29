@@ -27,7 +27,7 @@
       </select>
     </div>
 
-    <!-- Date range -->
+    <!-- Date range
     <div>
       <div class="flex items-center justify-between mb-1.5">
         <label class="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -78,23 +78,23 @@
         </div>
       </div>
     </div>
-    <Transition name="fade-slide">
+    <Transition name="fade-slide">F
       <div
         v-if="store.hasCategorySelected && store.availableConcepts.length > 0"
         class="space-y-2 p-3 rounded-lg bg-gold-50/50 dark:bg-gold-900/10 border border-gold-200/50 dark:border-gold-800/30"
       >
         <!-- Header -->
-        <div class="flex items-center justify-between">
+    <!-- <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <p class="text-xs font-medium text-gray-700 dark:text-gray-300">
               Specific concepts
-            </p>
-            <!-- <span
+            </p> -->
+    <!-- <span
               class="px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
             >
               Optional
             </span> -->
-          </div>
+    <!-- </div>
           <button
             v-if="store.selectedConceptValues.length > 0"
             class="text-xs text-gold-600 dark:text-gold-400 hover:text-gold-700 dark:hover:text-gold-300 font-medium transition-colors"
@@ -102,10 +102,10 @@
           >
             Clear ({{ store.selectedConceptValues.length }})
           </button>
-        </div>
+        </div> -->
 
-        <!-- Concept toggle buttons -->
-        <div class="grid grid-cols-2 gap-2">
+    <!-- Concept toggle buttons -->
+    <!-- <div class="grid grid-cols-2 gap-2">
           <button
             v-for="concept in store.availableConcepts"
             :key="concept.value"
@@ -122,7 +122,7 @@
           </button>
         </div>
       </div>
-    </Transition>
+    </Transition> -->
 
     <!-- Search + Reset buttons -->
     <div class="flex gap-2 pt-1">

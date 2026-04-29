@@ -64,7 +64,13 @@ export const useHumanActivitiesStore = defineStore("humanActivities", () => {
   }
 
   function fetchFromNeo4jMockData(params: QueryParams): Promise<QueryResult> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      console.log("Executing mock query with params:", params.concepts);
+      if (!params.concepts.includes("HumanActivity")) {
+        return reject(
+          new Error("The requested concept isn’t available right now."),
+        );
+      }
       setTimeout(() => {
         const filtered =
           params.assetType === "all"

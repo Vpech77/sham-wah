@@ -63,7 +63,7 @@ const navItems: Array<{
   view: ViewName;
 }> = [
   { label: "Explore Data", path: "/explore", view: "explore" },
-  { label: "Explore Map", path: "/map", view: "map" },
+  // { label: "Explore Map", path: "/map", view: "map" },
   // { label: "UserFeedback", path: "/edit", view: "edit" },
 ];
 

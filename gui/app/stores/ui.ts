@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 
 export type ViewName = "explore" | "map" | "edit";
 // export type SidebarTab = "cypher" | "chatbot" | "human" | "mock";
-export type SidebarTab = "chatbot" | "mock";
+export type SidebarTab = "mock";
 export type DisplayMode = "graph" | "table";
 
 export const useUiStore = defineStore("ui", () => {

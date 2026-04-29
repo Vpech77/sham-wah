@@ -24,10 +24,8 @@ const tabs: Array<{
   label: string;
   icon: string;
 }> = [
-  // { id: "human", label: "Predefined Query", icon: "P" },
   { id: "mock", label: "Predefined Query - Hard coded data", icon: "P" },
-  // { id: "cypher", label: "Graph Query", icon: "G" },
-  { id: "chatbot", label: "Chatbot", icon: "C" },
+  // { id: "chatbot", label: "Chatbot", icon: "C" },
 ];
 
 function onSelect(tab: SidebarTab) {

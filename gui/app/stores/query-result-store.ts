@@ -15,6 +15,8 @@ export interface DigitalAsset {
   name: string;
   comment: string;
   publisher?: string;
+  author?: string;
+  pdfUrl?: string;
   location?: string[];
 }
 

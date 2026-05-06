@@ -35,6 +35,10 @@ export const useGraphStore = defineStore("graph", () => {
       const { nodes: graphN, links } = buildGraphData(asset, nodes, edges);
       graphNodes.value = graphN;
       graphEdges.value = links;
+
+      console.log("Neighbor graph loaded:");
+      console.table(graphNodes.value);
+      console.table(graphEdges.value);
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Failed to load neighbors";
     } finally {

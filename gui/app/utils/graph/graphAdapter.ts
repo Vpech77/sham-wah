@@ -37,6 +37,8 @@ export function assetToNode(
     description: asset.comment,
     publisher: asset.publisher,
     location: asset.location,
+    pdfUrl: asset.pdfUrl,
+    author: asset.author,
     color: TYPE_COLORS[asset.type] ?? DEFAULT_COLOR,
     size: TYPE_SIZES[asset.type] ?? DEFAULT_SIZE,
     shape: isRect ? "rect" : "circle",

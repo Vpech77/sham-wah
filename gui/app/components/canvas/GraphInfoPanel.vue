@@ -71,6 +71,63 @@
       </p>
     </div>
 
+    <div v-if="node.author" class="mb-4">
+      <p
+        class="text-xs font-bold uppercase tracking-wide text-gray-800 dark:text-gray-200 mb-1"
+      >
+        Author
+      </p>
+      <div class="flex items-start gap-1.5">
+        <svg
+          class="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+          />
+        </svg>
+        <p class="text-xs text-gray-600 dark:text-gray-400">
+          {{ node.author }}
+        </p>
+      </div>
+    </div>
+
+    <div v-if="node.pdfUrl" class="mb-4">
+      <p
+        class="text-xs font-bold uppercase tracking-wide text-gray-800 dark:text-gray-200 mb-1"
+      >
+        PDF URL
+      </p>
+      <div class="flex items-start gap-1.5">
+        <svg
+          class="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+          />
+        </svg>
+        <a
+          :href="node.pdfUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline break-all"
+        >
+          {{ node.pdfUrl }}
+        </a>
+      </div>
+    </div>
+
     <!-- Publisher -->
     <div v-if="node.publisher" class="mb-4">
       <p

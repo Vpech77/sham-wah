@@ -8,6 +8,8 @@ export interface NodeDatum extends d3.SimulationNodeDatum {
   description: string;
   publisher?: string;
   location?: string[];
+  author?: string;
+  pdfUrl?: string;
   color: string;
   size: number;
   shape: NodeShape;

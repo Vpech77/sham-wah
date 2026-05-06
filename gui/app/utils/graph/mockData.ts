@@ -63,9 +63,36 @@ export const MOCK_ASSETS: DigitalAsset[] = [
     publisher: "",
     location: [],
   },
+
+  {
+    id: "https://intforout.github.io/outdoorPressure#KerouantonSurveyFieldCampaignTracksGNSS20142015",
+    type: "Dataset",
+    name: "Data Phd Kerouanton",
+    comment:
+      "Questionnaires de campagnes de terrain et traces GNSS ciblant la pratique de la randonnée dans le PNR du Massif des Bauges",
+    publisher: "LECA et l’EDYTEM",
+    location: ["Parc naturel régional du Massif des Bauges"],
+  },
 ];
 
 const GRAPH_ONLY_ASSETS: DigitalAsset[] = [
+  {
+    id: "https://intforout.github.io/outdoorPressure#ProfilageDataPhDKerouanton.pdf",
+    type: "Document",
+    name: "Profilage Data PhD Kerouanton.pdf",
+    comment: "",
+    publisher: "",
+    location: [],
+  },
+  {
+    id: "https://intforout.github.io/outdoorPressure#ProfilageDeepFauneANaciri",
+    type: "UserFeedback",
+    name: "Profilage Donnees PhD Kerouanton",
+    comment:
+      "Analyse -profilage- des données de recherche produites par Colin Kerouanton, notamment de la distribution des valeurs, (target 1). Le résultat de l'analyse est partagé dans un rapport (target 2)",
+    publisher: "",
+    location: [],
+  },
   {
     id: "https://intforout.github.io/outdoorPressure#OVRecreationalUserMapService",
     type: "DataService",
@@ -167,6 +194,30 @@ export interface MockNeighborGraph {
 }
 
 export const MOCK_NEIGHBOR_GRAPHS: Record<string, MockNeighborGraph> = {
+  "https://intforout.github.io/outdoorPressure#KerouantonSurveyFieldCampaignTracksGNSS20142015":
+    {
+      nodeIds: [
+        "https://intforout.github.io/outdoorPressure#KerouantonSurveyFieldCampaignTracksGNSS20142015",
+        "https://intforout.github.io/outdoorPressure#ProfilageDonneesKerouantonANaciri",
+        "https://intforout.github.io/outdoorPressure#ProfilageDataPhDKerouanton.pdf",
+      ],
+      edges: [
+        {
+          source:
+            "https://intforout.github.io/outdoorPressure#KerouantonSurveyFieldCampaignTracksGNSS20142015",
+          target:
+            "https://intforout.github.io/outdoorPressure#ProfilageDonneesKerouantonANaciri",
+          label: "ns6_target",
+        },
+        {
+          source:
+            "https://intforout.github.io/outdoorPressure#KerouantonSurveyFieldCampaignTracksGNSS20142015",
+          target:
+            "https://intforout.github.io/outdoorPressure#ProfilageDataPhDKerouanton.pdf",
+          label: "ns6_target",
+        },
+      ],
+    },
   "https://intforout.github.io/outdoorPressure#OVRecreationalUserMapService": {
     nodeIds: [
       "https://intforout.github.io/outdoorPressure#QualityOfOVRecreationalUserMapService",

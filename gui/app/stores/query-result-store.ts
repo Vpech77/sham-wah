@@ -13,6 +13,7 @@ export interface DigitalAsset {
   id: string;
   type: string;
   name: string;
+  rdfslabel?: string;
   comment: string;
   publisher?: string;
   location?: string[];

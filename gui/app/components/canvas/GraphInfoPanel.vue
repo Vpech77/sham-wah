@@ -53,6 +53,18 @@
       </p>
     </div>
 
+    <!-- label -->
+    <div class="mb-4">
+      <p
+        class="text-xs font-bold uppercase tracking-wide text-gray-800 dark:text-gray-200 mb-1"
+      >
+        label
+      </p>
+      <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+        {{ node.rdfslabel }}
+      </p>
+    </div>
+
     <!-- Comment -->
     <div class="mb-4">
       <p

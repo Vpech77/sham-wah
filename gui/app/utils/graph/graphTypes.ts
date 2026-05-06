@@ -5,6 +5,7 @@ export type NodeShape = "circle" | "rect";
 export interface NodeDatum extends d3.SimulationNodeDatum {
   id: string;
   label: string;
+  rdfslabel?: string;
   description: string;
   publisher?: string;
   location?: string[];
